@@ -4,7 +4,7 @@ import time
 
 from serial import Serial, SerialException
 
-from config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, BAUD_RATE, ACTIVE_PINS
+from config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS
 from one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
 
 
@@ -13,9 +13,9 @@ def serial_reader_thread(message_queues: dict):
     active_pins = list(message_queues.keys())
     try:
         # Open serial connection
-        with Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
+        with Serial(SERIAL_PORT, SERIAL_BAUD_RATE, timeout=1) as ser:
             buffer = ""
-            print(f"Listening on {SERIAL_PORT} at {BAUD_RATE} baud...")
+            print(f"Listening on {SERIAL_PORT} at {SERIAL_BAUD_RATE} baud...")
             time.sleep(2)  # Wait for Pico to reset after opening port (important for some boards)
 
             while True:
@@ -124,4 +124,4 @@ def one_wire_reader(active_pins: list):
 
 
 if __name__ == '__main__':
-    one_wire_reader(ACTIVE_PINS)
+    one_wire_reader(ACTIVE_PICO_PINS)
