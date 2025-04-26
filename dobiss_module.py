@@ -1,5 +1,6 @@
 
 
+
 class DobissModule:
     def __init__(self, module_number: int, module_type: str, module_can_id: int, nr_response_messages: int):
         self.module_number = module_number
@@ -22,7 +23,8 @@ class DobissModule:
         )
 
     def get_status_msg(self):
-        return b'' + self.module_number.to_bytes(1, 'big') + b'ff'
+        return bytes([self.module_number, 0xff])
 
     def get_status_can_id(self):
         return self.module_can_id - 1
+

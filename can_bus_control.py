@@ -82,8 +82,8 @@ def test_send_msg():
 
     # Prepare the message
     msg = can.Message(
-        arbitration_id=0x00200401,  # 4194562 decimal
-        data=bytes.fromhex('04ff'),
+        arbitration_id=0x00400101,  # 4194562 decimal
+        data=bytes.fromhex('01ff'),
         # 010100ffff64ffff
         # 010101FFFF64FFFF
         # AABBCCDDEEFFGGHH
@@ -109,4 +109,5 @@ def test_send_msg():
 
 
 if __name__ == '__main__':
-    test_send_msg()
+    # test_send_msg()
+    update_status_of_entities(None)
