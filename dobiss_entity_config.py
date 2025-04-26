@@ -48,7 +48,7 @@ DOBISS_SHADES_CONFIG = {
 # nr_response_messages: The number of CAN-bus messages needed to report the status of all the relays on the module.
 
 DOBISS_MODULES = {
-  1: {'module_number': 1, 'type': DOBISS_DIMMER, 'id': 0x00400102, 'nr_response_messages': 2},
+  1: {'module_number': 1, 'type': DOBISS_DIMMER, 'id': 0x00400102, 'nr_response_messages': 1},
   2: {'module_number': 2, 'type': DOBISS_RELAY, 'id': 0x00200202, 'nr_response_messages': 2},
   3: {'module_number': 3, 'type': DOBISS_RELAY, 'id': 0x00200302, 'nr_response_messages': 2},
   4: {'module_number': 4, 'type': DOBISS_RELAY, 'id': 0x00200402, 'nr_response_messages': 2},

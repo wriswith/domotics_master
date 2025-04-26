@@ -61,13 +61,20 @@ def can_bus_control():
 def update_status_of_entities(dobiss_entities):
     bus = get_can_bus()
     for module_number in DOBISS_MODULES:
-        if module_number == 1:
-            module = DobissModule.config_to_dobiss_module(DOBISS_MODULES[module_number])
-            msg = can.Message(arbitration_id=module.get_status_can_id(),
-                              data=module.get_status_msg(),
-                              is_extended_id=True)
-            bus.send(msg)
-            break
+        module = DobissModule.config_to_dobiss_module(DOBISS_MODULES[module_number])
+        msg = can.Message(arbitration_id=module.get_status_can_id(),
+                          data=module.get_status_msg(),
+                          is_extended_id=True)
+        bus.send(msg)
+        response = b''
+        for i in range(module.nr_response_messages):
+            response = bus.recv(timeout=0.4)  # small timeout per recv
+            if response is None:
+                raise Exception(f"Failed to get a response when requesting status from module {module.module_number}.")
+
+            response += response.data
+            print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
+        print(response.hex())
 
 
 
