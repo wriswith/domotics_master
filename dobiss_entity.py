@@ -11,16 +11,17 @@ class DobissEntity:
         self.output = output
         self.dobiss_type = dobiss_type
         self.name = name
+        self.current_brightness = None
 
     @staticmethod
-    def config_to_dobiss_entity(config_array, entity_name):
+    def config_to_dobiss_entity(config_dict, entity_name):
         """
 
-        :param config_array:
+        :param config_dict:
         :param entity_name:
         :return: DobissEntity
         """
-        return DobissEntity(config_array['module'], config_array['output'], config_array['dobiss_type'], entity_name)
+        return DobissEntity(config_dict['module'], config_dict['output'], config_dict['dobiss_type'], entity_name)
 
     @staticmethod
     def shade_config_to_dobiss_entity(config_array, entity_name, action):

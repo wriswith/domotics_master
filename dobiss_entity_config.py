@@ -40,12 +40,21 @@ DOBISS_SHADES_CONFIG = {
   "Slaapkamer Ouders": {"output_up": {"module": 4, "output": 7}, "output_down": {"module": 4, "output": 6}, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
 }
 
+
+# List of all the modules in the system. Every module has the following attributes
+# module_number: The module number as used in the dobiss configuration software
+# type Not currently used
+# id: The id of the module as used in the CAN-bus protocol. Can be detected by listening to the bus and using the app to switch relays.
+# nr_response_messages: The number of CAN-bus messages needed to report the status of all the relays on the module.
+
 DOBISS_MODULES = {
-  1: {'type': DOBISS_DIMMER, 'id': 0x00400102},
-  2: {'type': DOBISS_RELAY, 'id': 0x00200202},
-  3: {'type': DOBISS_RELAY, 'id': 0x00200302},
-  4: {'type': DOBISS_RELAY, 'id': 0x00200402},
+  1: {'module_number': 1, 'type': DOBISS_DIMMER, 'id': 0x00400102, 'nr_response_messages': 2},
+  2: {'module_number': 2, 'type': DOBISS_RELAY, 'id': 0x00200202, 'nr_response_messages': 2},
+  3: {'module_number': 3, 'type': DOBISS_RELAY, 'id': 0x00200302, 'nr_response_messages': 2},
+  4: {'module_number': 4, 'type': DOBISS_RELAY, 'id': 0x00200402, 'nr_response_messages': 2},
 }
+
+# 0x00200401 - 04 ff
 
 def pivot_config(config):
   result = {}

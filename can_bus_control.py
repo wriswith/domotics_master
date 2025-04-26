@@ -3,7 +3,8 @@ import can
 
 from config import CAN_CHANNEL, CAN_INTERFACE
 from dobiss_entity import DobissEntity
-from dobiss_entity_config import DOBISS_LIGHTS_CONFIG
+from dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_MODULES
+from dobiss_module import DobissModule
 
 """
 I made use of the  DSD TECH USB to CAN-bus SH-C30A.
@@ -14,6 +15,15 @@ I set the bitrate to 125000 at device detection with a udev rule.
 """
 
 
+# Create a dict of all dobiss entities
+# Read the status of all doviss entities
+# create a switch option to flip the status
+# create dimmer support
+
+
+def get_can_bus():
+    return can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
+
 def can_bus_control():
     bus = can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
 
@@ -21,7 +31,7 @@ def can_bus_control():
 
     # Prepare the message
     msg = can.Message(
-        arbitration_id=dobiss_entity.module_id,
+        arbitration_id=dobiss_entity.module_can_id,
         data=dobiss_entity.get_msg_to_set_status(1),
         is_extended_id=True  # important! your ID is 29 bits (extended frame)
     )
@@ -35,6 +45,36 @@ def can_bus_control():
     finally:
         bus.shutdown()
 
+    try:
+        # Wait for a message (timeout in seconds)
+        response = bus.recv(timeout=1.0)
+
+        if response is None:
+            print("No response received within timeout.")
+        else:
+            print(f"Received message: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}, ExtendedID={response.is_extended_id}")
+
+    except can.CanError as e:
+        print(f"Error receiving message: {e}")
+
+
+def update_status_of_entities(dobiss_entities):
+    bus = get_can_bus()
+    for module_number in DOBISS_MODULES:
+        if module_number == 1:
+            module = DobissModule.config_to_dobiss_module(DOBISS_MODULES[module_number])
+            msg = can.Message(arbitration_id=module.get_status_can_id(),
+                              data=module.get_status_msg(),
+                              is_extended_id=True)
+            bus.send(msg)
+            break
+
+
+
+    # for name in dobiss_entities:
+
+    bus.shutdown()
+
 
 def test_send_msg():
     # Set up the CAN bus
@@ -42,8 +82,8 @@ def test_send_msg():
 
     # Prepare the message
     msg = can.Message(
-        arbitration_id=0x00400102,  # 4194562 decimal
-        data=bytes.fromhex('010101FFFF64FFFF'),
+        arbitration_id=0x00200401,  # 4194562 decimal
+        data=bytes.fromhex('04ff'),
         # 010100ffff64ffff
         # 010101FFFF64FFFF
         # AABBCCDDEEFFGGHH
@@ -55,7 +95,7 @@ def test_send_msg():
         # FF: Steeds 64
         # GG: Steeds FF
         # HH: Steeds FF
-        is_extended_id=True  # important! your ID is 29 bits (extended frame)
+        is_extended_id=True
     )
 
     # Send the message
