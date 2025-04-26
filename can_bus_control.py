@@ -74,7 +74,7 @@ def update_status_of_entities(dobiss_entities):
 
             complete_response += response.data
             print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
-        print(response.hex())
+        print(complete_response.hex())
 
 
 
