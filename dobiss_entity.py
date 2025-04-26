@@ -1,4 +1,4 @@
-from dobiss_relay_config import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_MODULES
+from dobiss_entity_config import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_MODULES
 
 
 

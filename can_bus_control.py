@@ -3,7 +3,7 @@ import can
 
 from config import CAN_CHANNEL, CAN_INTERFACE
 from dobiss_entity import DobissEntity
-from dobiss_relay_config import DOBISS_LIGHTS_CONFIG
+from dobiss_entity_config import DOBISS_LIGHTS_CONFIG
 
 """
 I made use of the  DSD TECH USB to CAN-bus SH-C30A.
@@ -15,7 +15,7 @@ I set the bitrate to 125000 at device detection with a udev rule.
 
 
 def can_bus_control():
-    bus = can.interface.Bus(channel='can0', interface='socketcan')
+    bus = can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
 
     dobiss_entity = DobissEntity.config_to_dobiss_entity(DOBISS_LIGHTS_CONFIG["Trap"], "Trap")
 
