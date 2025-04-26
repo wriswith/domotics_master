@@ -66,13 +66,13 @@ def update_status_of_entities(dobiss_entities):
                           data=module.get_status_msg(),
                           is_extended_id=True)
         bus.send(msg)
-        response = b''
+        complete_response = b''
         for i in range(module.nr_response_messages):
             response = bus.recv(timeout=0.4)  # small timeout per recv
             if response is None:
                 raise Exception(f"Failed to get a response when requesting status from module {module.module_number}.")
 
-            response += response.data
+            complete_response += response.data
             print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
         print(response.hex())
 
