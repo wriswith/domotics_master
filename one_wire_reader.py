@@ -10,7 +10,11 @@ from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, 
 from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS
 
 def serial_reader_thread(message_queues: dict):
-
+    """
+    Receive the messages from the pico pi and put them into the "queue" for handling.
+    :param message_queues:
+    :return:
+    """
     active_pins = list(message_queues.keys())
     try:
         # Open serial connection
@@ -20,15 +24,16 @@ def serial_reader_thread(message_queues: dict):
             time.sleep(2)  # Wait for Pico to reset after opening port (important for some boards)
 
             while True:
-
                 if ser.in_waiting > 0:
                     line = ser.readline().decode('utf-8').strip()
                     buffer += line
+
+                    # every message ends with '###'. If this pattern is detected, there should be a message in the buffer.
                     if "###" in buffer:
                         parts = buffer.split("###")
-                        buffer = parts.pop()  # add last empty of incomplete message to buffer.
+                        buffer = parts.pop()  # add last empty or incomplete message back into buffer.
                         for raw_message in parts:
-                            message = OneWireMessage(raw_message)
+                            message = OneWireMessage(raw_message)  # parse the raw message to a message object.
                             if message.pin in active_pins:
                                 message_queues[message.pin].append(message)
                             else:

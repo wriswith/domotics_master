@@ -77,8 +77,8 @@ def update_status_of_entities(dobiss_entities):
                 raise Exception(f"Failed to get a response when requesting status from module {module.module_number}.")
 
             complete_response += response.data
-            print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
-        print(complete_response.hex())
+            # print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
+        # print(f"Complete response: {complete_response.hex()}")
         parse_status_response(complete_response, dobiss_entities, module.module_number)
 
     bus.shutdown()

@@ -8,6 +8,9 @@ SWITCH_ACTION_RELEASE = 'release'
 
 
 class SwitchEvent:
+    """
+    Object to communicate a button press, hold or release with the necessary metadata.
+    """
     def __init__(self, circuit_id, action, duration):
         self.circuit_id = circuit_id
         self.action = action
