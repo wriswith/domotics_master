@@ -2,9 +2,9 @@
 import can
 
 from config import CAN_CHANNEL, CAN_INTERFACE
-from dobiss_entity import DobissEntity
-from dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_MODULES
-from dobiss_module import DobissModule
+from objects.dobiss_entity import DobissEntity
+from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_MODULES
+from objects.dobiss_module import DobissModule
 
 """
 I made use of the  DSD TECH USB to CAN-bus SH-C30A.
@@ -59,6 +59,7 @@ def can_bus_control():
 
 
 def update_status_of_entities(dobiss_entities):
+    dobiss_entities = pivot_entity_dict(dobiss_entities)
     bus = get_can_bus()
     for module_number in DOBISS_MODULES:
         module = DobissModule.config_to_dobiss_module(DOBISS_MODULES[module_number])
@@ -75,12 +76,30 @@ def update_status_of_entities(dobiss_entities):
             complete_response += response.data
             print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
         print(complete_response.hex())
-
-
-
-    # for name in dobiss_entities:
+        parse_status_response(complete_response, dobiss_entities, module.module_number)
 
     bus.shutdown()
+
+
+def parse_status_response(response: bytes, dobiss_entities, module_number: int):
+    output_number = 0
+    for response_byte in response:
+        if response_byte == 0xff:
+            break  # no more outputs
+        else:
+            output_number += 1
+            if output_number in dobiss_entities[module_number]:
+                dobiss_entities[module_number][output_number].current_brightness = response_byte
+
+
+def pivot_entity_dict(dobiss_entities):
+    module_output_dict = {}
+    for name in dobiss_entities:
+        entity = dobiss_entities[name]
+        if entity.module_number not in module_output_dict:
+            module_output_dict[entity.module_number] = {}
+        module_output_dict[entity.module_number][entity.output] = entity
+    return module_output_dict
 
 
 def test_send_msg():
@@ -116,5 +135,12 @@ def test_send_msg():
 
 
 if __name__ == '__main__':
-    # test_send_msg()
-    update_status_of_entities(None)
+    test_send_msg()
+    # update_status_of_entities(None)
+    # c_resp = b'\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\xff\xff\xff\xff'
+    # dobiss_entities = {}
+    # for name in DOBISS_LIGHTS_CONFIG:
+    #     dobiss_entities[name] = DobissEntity.config_to_dobiss_entity(DOBISS_LIGHTS_CONFIG[name], name)
+    # dobiss_entities = pivot_entity_dict(dobiss_entities)
+    # parse_status_response(c_resp, dobiss_entities, 4)
+

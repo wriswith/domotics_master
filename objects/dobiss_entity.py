@@ -1,13 +1,15 @@
-from dobiss_entity_config import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_MODULES
-
+from config.dobiss_entity_config import DOBISS_RELAY, DOBISS_DIMMER
 
 
 class DobissEntity:
-    def __init__(self, module: int = None, output: int = None, dobiss_type: str = None, name: str = None):
-        if module is None or output is None or dobiss_type not in (DOBISS_RELAY, DOBISS_DIMMER):
-            raise ValueError(f"Problem with parameters ({module}, {output}, {dobiss_type})")
-        self.module = module
-        self.module_id = DOBISS_MODULES[module]['id']
+    def __init__(self, module_number: int = None, output: int = None, dobiss_type: str = None, name: str = None):
+        if module_number is None:
+            raise ValueError(f"module_number can not be None.")
+        if output is None:
+            raise ValueError(f"output can not be None.")
+        if dobiss_type not in (DOBISS_RELAY, DOBISS_DIMMER):
+            raise ValueError(f"dobiss_type should be {DOBISS_RELAY} or {DOBISS_DIMMER} not {dobiss_type}.")
+        self.module_number = module_number
         self.output = output
         self.dobiss_type = dobiss_type
         self.name = name
@@ -57,7 +59,7 @@ class DobissEntity:
             raise ValueError(f"{self.dobiss_type} has no known device type hex")
 
     def get_module_hex(self):
-        return self.module.to_bytes(1, 'big')
+        return self.module_number.to_bytes(1, 'big')
 
     def get_output_hex(self):
         return (self.output - 1).to_bytes(1, 'big')

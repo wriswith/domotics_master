@@ -1,12 +1,13 @@
+from queue import Queue
 from threading import Thread
 
 import time
 
 from serial import Serial, SerialException
 
-from config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS
-from one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
-
+from config.config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS
+from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
+from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS
 
 def serial_reader_thread(message_queues: dict):
 
@@ -41,7 +42,10 @@ def serial_reader_thread(message_queues: dict):
         print("Interrupted by user.")
 
 
-def circuit_id_released(button_down_message: OneWireMessage, release_message: OneWireMessage):
+def button_released(button_down_message: OneWireMessage, release_message: OneWireMessage, switch_event_queue: Queue):
+    switch_event_queue.put(SwitchEvent(circuit_id=button_down_message.circuit_id,
+                                       action=SWITCH_ACTION_RELEASE,
+                                       duration=(release_message.frame_number - button_down_message.frame_number) * 0.05))
     if (DISCOVERY_MODE and button_down_message.circuit_id_is_unknown and
             (release_message.frame_number - button_down_message.frame_number) * 0.05 > 3):
         button_name = input("Enter the name for the released button and press enter.")
@@ -51,11 +55,19 @@ def circuit_id_released(button_down_message: OneWireMessage, release_message: On
     print(f"Released button {button_down_message.get_button_label()}")
 
 
-def button_pressed(message: OneWireMessage):
+def button_pressed(message: OneWireMessage, switch_event_queue: Queue):
+    switch_event_queue.put(SwitchEvent(circuit_id=message.circuit_id,
+                                       action=SWITCH_ACTION_PRESS,
+                                       duration=0))
     print(f"Button pressed ({message.get_button_label()})")
 
-def button_held(button_down_message: OneWireMessage, current_message: OneWireMessage):
-    print(f"Button held ({current_message.get_button_label()})")
+
+def button_held(button_down_message: OneWireMessage, current_message: OneWireMessage, switch_event_queue: Queue):
+    switch_event_queue.put(SwitchEvent(circuit_id=button_down_message.circuit_id,
+                                       action=SWITCH_ACTION_RELEASE,
+                                       duration=(current_message.frame_number - button_down_message.frame_number) * 0.05))
+    print(f"Button held ({button_down_message.get_button_label()})")
+
 
 def is_divergent_message(messages, message):
     divergent_message = False
@@ -67,27 +79,27 @@ def is_divergent_message(messages, message):
     return divergent_message
 
 
-def parse_message(message: OneWireMessage, button_down_message: OneWireMessage):
+def parse_message(message: OneWireMessage, button_down_message: OneWireMessage, switch_event_queue: Queue):
     if message.message_type == MT_HEARTBEAT:
         if button_down_message is not None:
-            circuit_id_released(button_down_message, message)
-            return None
+            button_released(button_down_message, message, switch_event_queue)
+        return None
     elif message.message_type == MT_CIRCUIT_ID:
         if button_down_message is None:
-                button_pressed(message)
+                button_pressed(message, switch_event_queue)
                 return message
         elif message.circuit_id != button_down_message.circuit_id:
-            circuit_id_released(button_down_message, message)
-            button_pressed(message)
+            button_released(button_down_message, message, switch_event_queue)
+            button_pressed(message, switch_event_queue)
             return message
         else:
-            button_held(button_down_message, message)
+            button_held(button_down_message, message, switch_event_queue)
             return button_down_message
     else:
         raise Exception(f"This message type is not implemented: {message.message_type}. ({message})")
 
 
-def message_handler(message_queue: list):
+def message_handler(message_queue: list, switch_event_queue: Queue):
     button_down_message = None
     min_identical_msg = 2
     previous_loop = []
@@ -104,19 +116,19 @@ def message_handler(message_queue: list):
                     previous_loop.append(message)
 
                 if len(previous_loop) >= min_identical_msg:
-                    button_down_message = parse_message(message, button_down_message)
+                    button_down_message = parse_message(message, button_down_message, switch_event_queue)
                     previous_loop = []
 
         time.sleep(0.02)
 
 
-def one_wire_reader(active_pins: list):
+def one_wire_reader(active_pins: list, switch_event_queue: Queue):
     # Start reading messages from the pi pico
     message_queues = {}
     message_handler_threads = {}
     for pin in active_pins:
         message_queues[pin] = []
-        message_handler_threads[pin] = Thread(target=message_handler, args=(message_queues[pin], ))
+        message_handler_threads[pin] = Thread(target=message_handler, args=(message_queues[pin], switch_event_queue, ))
         message_handler_threads[pin].start()
 
     serial_thread = Thread(target=serial_reader_thread, args=(message_queues, ))
@@ -124,4 +136,4 @@ def one_wire_reader(active_pins: list):
 
 
 if __name__ == '__main__':
-    one_wire_reader(ACTIVE_PICO_PINS)
+    one_wire_reader(ACTIVE_PICO_PINS, Queue())

@@ -1,7 +1,7 @@
 import re
 
-from button_names_config import CIRCUIT_ID_BUTTON_MAPPING
-from config import ALLOW_NEW_CIRCUIT_IDS
+from config.button_names_config import CIRCUIT_ID_BUTTON_MAPPING
+from config.config import ALLOW_NEW_CIRCUIT_IDS
 
 MT_HEARTBEAT = "heartbeat"
 MT_INVALID = "invalid"

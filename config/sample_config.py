@@ -1,7 +1,7 @@
 
 ALLOW_NEW_CIRCUIT_IDS = True
 DISCOVERY_MODE = True  # After 3+ seconds button press, you will be prompted for name.
-DISCOVERY_OUTPUT_FILE = "button_discovery.txt"
+DISCOVERY_OUTPUT_FILE = "../button_discovery.txt"
 
 SERIAL_PORT = 'COM8'
 
