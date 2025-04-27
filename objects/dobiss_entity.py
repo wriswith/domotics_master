@@ -1,4 +1,4 @@
-from config.dobiss_entity_config import DOBISS_RELAY, DOBISS_DIMMER
+from config.dobiss_entity_config import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_MODULES
 
 
 class DobissEntity:
@@ -10,10 +10,12 @@ class DobissEntity:
         if dobiss_type not in (DOBISS_RELAY, DOBISS_DIMMER):
             raise ValueError(f"dobiss_type should be {DOBISS_RELAY} or {DOBISS_DIMMER} not {dobiss_type}.")
         self.module_number = module_number
+        self.module_id = DOBISS_MODULES[module_number]['id']
         self.output = output
         self.dobiss_type = dobiss_type
         self.name = name
-        self.current_brightness = None
+        self.current_status = None  # 0 = off, 1 = on
+        self.current_brightness = 100  # for dimmers this represents the brightness and the max value is 100
 
     @staticmethod
     def config_to_dobiss_entity(config_dict, entity_name):
@@ -68,16 +70,14 @@ class DobissEntity:
         return self.get_module_hex() + self.get_output_hex()
 
     def get_msg_to_set_status(self, status: int, brightness=100):
-        return b'' + self.get_full_address() + status.to_bytes(1, 'big') + b'\xff\xff' + DobissEntity.convert_int_to_hex(brightness) + b'\xff\xff'
+        self.current_status = status
+        return (b'' + self.get_full_address() + self.current_status.to_bytes(1, 'big') + b'\xff\xff'
+                + DobissEntity.convert_int_to_hex(brightness) + b'\xff\xff')
 
-    # def get_status_in_dobiss(self):
-    #     call_to_module = b'\xaf\x01' + self.get_device_type_hex() + self.get_module_hex() + \
-    #                      b'\x00\x00\x00\x01\x00\xff\xff\xff\xff\xff\xff\xaf'
-    #     # "Ventilatie": {"module": 4, "output": 3, "dobiss_type": "relay"},
-    #     response = send_hex_tcp([call_to_module])
-    #     if self.dobiss_type == DOBISS_RELAY:
-    #         return response[43]
-    #     elif self.dobiss_type == DOBISS_DIMMER:
-    #         return response[32]
-    #     else:
-    #         raise ValueError(f"{self.dobiss_type} has no known device type hex")
+    def get_msg_to_switch_status(self):
+        if self.current_status == 0:
+            self.current_status = 1
+        else:
+            self.current_status = 0
+        return (b'' + self.get_full_address() + DobissEntity.convert_int_to_hex(self.current_status) + b'\xff\xff'
+                + DobissEntity.convert_int_to_hex(self.current_brightness) + b'\xff\xff')

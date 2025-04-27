@@ -1,6 +1,5 @@
 
 
-
 class DobissModule:
     def __init__(self, module_number: int, module_type: str, module_can_id: int, nr_response_messages: int):
         self.module_number = module_number

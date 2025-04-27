@@ -1,9 +1,10 @@
 
 import can
+from can import Message
 
-from config import CAN_CHANNEL, CAN_INTERFACE
+from config.config import CAN_CHANNEL, CAN_INTERFACE
 from objects.dobiss_entity import DobissEntity
-from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_MODULES
+from config.dobiss_entity_config import DOBISS_MODULES, DOBISS_DIMMER
 from objects.dobiss_module import DobissModule
 
 """
@@ -15,50 +16,52 @@ I set the bitrate to 125000 at device detection with a udev rule.
 """
 
 
-# Create a dict of all dobiss entities
-# Read the status of all doviss entities
-# create a switch option to flip the status
-# create dimmer support
-
-
 def get_can_bus():
     return can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
 
-def can_bus_control():
-    bus = can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
 
-    dobiss_entity = DobissEntity.config_to_dobiss_entity(DOBISS_LIGHTS_CONFIG["Trap"], "Trap")
+def switch_dobiss_entity(entity: DobissEntity):
+    """
+    Switch the status of the entity (reverse on or off)
+    :param entity:
+    :return:
+    """
+    bus = get_can_bus()
+    msg = create_can_message(entity.module_id, entity.get_msg_to_switch_status())
+    send_can_message(msg, bus)
 
-    # Prepare the message
-    msg = can.Message(
-        arbitration_id=dobiss_entity.module_can_id,
-        data=dobiss_entity.get_msg_to_set_status(1),
-        is_extended_id=True  # important! your ID is 29 bits (extended frame)
+
+def create_can_message(arbitration_id: int, data: bytes):
+    return can.Message(
+        arbitration_id=arbitration_id,
+        data=data,
+        is_extended_id=True
     )
 
-    # Send the message
+
+def send_can_message(message: Message, bus: can.interface.Bus):
+    """
+    Send a CAN message onto the bus. Responses are not supported by this function.
+    :param message:
+    :param bus:
+    :return:
+    """
     try:
-        bus.send(msg)
-        print("Message sent successfully!")
+        bus.send(message)
+        return True
     except can.CanError as e:
         print(f"Message NOT sent: {e}")
+        raise e
     finally:
         bus.shutdown()
 
-    try:
-        # Wait for a message (timeout in seconds)
-        response = bus.recv(timeout=1.0)
-
-        if response is None:
-            print("No response received within timeout.")
-        else:
-            print(f"Received message: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}, ExtendedID={response.is_extended_id}")
-
-    except can.CanError as e:
-        print(f"Error receiving message: {e}")
-
 
 def update_status_of_entities(dobiss_entities):
+    """
+    Get the status of all outputs of every object and update the entity objects accordingly.
+    :param dobiss_entities:
+    :return:
+    """
     dobiss_entities = pivot_entity_dict(dobiss_entities)
     bus = get_can_bus()
     for module_number in DOBISS_MODULES:
@@ -82,6 +85,13 @@ def update_status_of_entities(dobiss_entities):
 
 
 def parse_status_response(response: bytes, dobiss_entities, module_number: int):
+    """
+    Parse the response of a module to the status of the individual outputs.
+    :param response:
+    :param dobiss_entities:
+    :param module_number:
+    :return:
+    """
     output_number = 0
     for response_byte in response:
         if response_byte == 0xff:
@@ -89,10 +99,24 @@ def parse_status_response(response: bytes, dobiss_entities, module_number: int):
         else:
             output_number += 1
             if output_number in dobiss_entities[module_number]:
-                dobiss_entities[module_number][output_number].current_brightness = response_byte
+                entity = dobiss_entities[module_number][output_number]
+                if entity.dobiss_type == DOBISS_DIMMER:
+                    if response_byte == 0:
+                        entity.current_status = 0
+                        entity.current_brightness = 0
+                    else:
+                        entity.current_status = 1
+                        entity.current_brightness = response_byte
+                else:
+                    dobiss_entities[module_number][output_number].current_status = response_byte
 
 
 def pivot_entity_dict(dobiss_entities):
+    """
+    Return a dict with module and output as key instead of entity_name.
+    :param dobiss_entities:
+    :return:
+    """
     module_output_dict = {}
     for name in dobiss_entities:
         entity = dobiss_entities[name]
@@ -100,47 +124,3 @@ def pivot_entity_dict(dobiss_entities):
             module_output_dict[entity.module_number] = {}
         module_output_dict[entity.module_number][entity.output] = entity
     return module_output_dict
-
-
-def test_send_msg():
-    # Set up the CAN bus
-    bus = can.interface.Bus(channel='can0', interface='socketcan')
-
-    # Prepare the message
-    msg = can.Message(
-        arbitration_id=0x00400101,  # 4194562 decimal
-        data=bytes.fromhex('01ff'),
-        # 010100ffff64ffff
-        # 010101FFFF64FFFF
-        # AABBCCDDEEFFGGHH
-        # AA: Module
-        # BB: Relay (tellen vanaf 0, dus -1)
-        # CC: 00 for off, 01 for on
-        # DD: Steeds FF
-        # EE: Steeds FF
-        # FF: Steeds 64
-        # GG: Steeds FF
-        # HH: Steeds FF
-        is_extended_id=True
-    )
-
-    # Send the message
-    try:
-        bus.send(msg)
-        print("Message sent successfully!")
-    except can.CanError as e:
-        print(f"Message NOT sent: {e}")
-    finally:
-        bus.shutdown()
-
-
-if __name__ == '__main__':
-    test_send_msg()
-    # update_status_of_entities(None)
-    # c_resp = b'\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\xff\xff\xff\xff'
-    # dobiss_entities = {}
-    # for name in DOBISS_LIGHTS_CONFIG:
-    #     dobiss_entities[name] = DobissEntity.config_to_dobiss_entity(DOBISS_LIGHTS_CONFIG[name], name)
-    # dobiss_entities = pivot_entity_dict(dobiss_entities)
-    # parse_status_response(c_resp, dobiss_entities, 4)
-
