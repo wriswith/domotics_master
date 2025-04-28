@@ -12,8 +12,8 @@ def get_timestamp_logger():
 
     # Create a formatter with a human-readable timestamp
     formatter = logging.Formatter(
-        fmt="%(asctime)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        fmt="%(asctime)s.%(msecs)03d - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S:"
     )
 
     # Attach formatter to the handler
