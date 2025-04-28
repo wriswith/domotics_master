@@ -75,9 +75,17 @@ class DobissEntity:
                 + DobissEntity.convert_int_to_hex(brightness) + b'\xff\xff')
 
     def get_msg_to_switch_status(self):
-        if self.current_status == 0:
-            self.current_status = 1
+        if self.dobiss_type == DOBISS_DIMMER:
+            if self.current_status == 0:
+                self.current_status = 2
+                self.current_brightness = 100
+            else:
+                self.current_status = 0
         else:
-            self.current_status = 0
+            if self.current_status == 0:
+                self.current_status = 1
+            else:
+                self.current_status = 0
+
         return (b'' + self.get_full_address() + DobissEntity.convert_int_to_hex(self.current_status) + b'\xff\xff'
                 + DobissEntity.convert_int_to_hex(self.current_brightness) + b'\xff\xff')
