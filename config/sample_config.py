@@ -11,4 +11,6 @@ ACTIVE_PICO_PINS = [13, 14, 15]
 CAN_INTERFACE = "socketcan"
 CAN_CHANNEL = "can0"
 
+MIN_IDENTICAL_ONE_WIRE_MESSAGES = 3
 
+BUTTON_LOCKOUT_PERIOD = 0.5  # Ignore buttons after release to avoid double click.

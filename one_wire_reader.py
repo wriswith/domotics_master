@@ -8,7 +8,8 @@ from serial import Serial, SerialException
 from config.config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS, \
     MIN_IDENTICAL_ONE_WIRE_MESSAGES
 from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
-from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS
+from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS, SWITCH_ACTION_HOLD
+
 
 def serial_reader_thread(message_queues: dict):
     """
@@ -52,14 +53,23 @@ def button_released(button_down_message: OneWireMessage, release_message: OneWir
     switch_event_queue.put(SwitchEvent(circuit_id=button_down_message.circuit_id,
                                        action=SWITCH_ACTION_RELEASE,
                                        duration=(release_message.frame_number - button_down_message.frame_number) * 0.05))
-    if (DISCOVERY_MODE and button_down_message.circuit_id_is_unknown and
+    if DISCOVERY_MODE:
+        discovery_mode(button_down_message, release_message)
+
+    print(f"Released button {button_down_message.get_button_label()}")
+
+
+def discovery_mode(button_down_message, release_message):
+    """
+    Execution will block after long press on new button to allow logging the new circuit_id with a user-friendly name
+    to a log file
+    """
+    if (button_down_message.circuit_id_is_unknown and
             (release_message.frame_number - button_down_message.frame_number) * 0.05 > 3):
         button_name = input("Enter the name for the released button and press enter.")
         if len(button_name) > 0:
             with open(DISCOVERY_OUTPUT_FILE, 'at') as discovery_file:
                 discovery_file.write(f'"{button_down_message.circuit_id}": "{button_name}",\r\n')
-    print(f"Released button {button_down_message.get_button_label()}")
-
 
 def button_pressed(message: OneWireMessage, switch_event_queue: Queue):
     switch_event_queue.put(SwitchEvent(circuit_id=message.circuit_id,
@@ -70,7 +80,7 @@ def button_pressed(message: OneWireMessage, switch_event_queue: Queue):
 
 def button_held(button_down_message: OneWireMessage, current_message: OneWireMessage, switch_event_queue: Queue):
     switch_event_queue.put(SwitchEvent(circuit_id=button_down_message.circuit_id,
-                                       action=SWITCH_ACTION_RELEASE,
+                                       action=SWITCH_ACTION_HOLD,
                                        duration=(current_message.frame_number - button_down_message.frame_number) * 0.05))
     print(f"Button held ({button_down_message.get_button_label()})")
 
