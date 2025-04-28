@@ -36,6 +36,7 @@ BUTTON_ENTITY_MAP = {
     "trap_voorkant_1": {'short': 'Trap', 'long': 'Trap'},
     "trap_ouders_1": {'short': 'Trap', 'long': 'Trap'},
     "trap_badkamer_1": {'short': 'Trap', 'long': 'Trap'},
+    "kind_deur_1": {'short': 'Slaapkamer Daniel', 'long': 'Slaapkamer Daniel'},
     "ouders_deur_1": {'short': 'Slaapkamer Ouders', 'long': 'Slaapkamer Ouders'},
     "ouders_bed_1": {'short': 'Slaapkamer Ouders', 'long': 'Slaapkamer Ouders'},
     "ouders_screen_1": {'short': 'Slaapkamer Ouders up', 'long': 'Slaapkamer Ouders up'},
