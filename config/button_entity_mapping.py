@@ -45,7 +45,7 @@ BUTTON_ENTITY_MAP = {
     "badkamer_1": {'short': 'Badkamer', 'long': 'Badkamer'},
     "badkamer_2": {'short': 'Spiegel', 'long': 'Spiegel'},
     "badkamer_3": {'short': 'Douche', 'long': 'Boost'},
-    "trap_zolder_1": {'short': 'Trap', 'long': 'Trap'},
+    "trap_zolder_1": {'short': 'Zolder', 'long': 'Zolder'},
     "beestje_1": {'short': 'Bureau Beestje', 'long': 'Bureau Beestje'},
     "wasplaats_1": {'short': 'Wasplaats', 'long': 'Wasplaats'},
 }
