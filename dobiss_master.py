@@ -3,7 +3,7 @@ from queue import Queue
 
 from can_bus_control import update_status_of_entities, switch_dobiss_entity
 from config.button_entity_mapping import BUTTON_ENTITY_MAP
-from config.config import ACTIVE_PICO_PINS, SHORT_PRESS_CUTOFF
+from config.config import ACTIVE_PICO_PINS, SHORT_PRESS_CUTOFF, BUTTON_LOCKOUT_PERIOD
 from logger import logger
 from objects.dobiss_entity import DobissEntity
 from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG
@@ -35,8 +35,10 @@ def handle_button_events(switch_event_queue, button_entity_map):
             click_mode = 'short'
             if switch_event.duration > SHORT_PRESS_CUTOFF:
                 click_mode = 'long'
+            entity = button_entity_map[switch_event.button_name][click_mode]
+            logger.info(f"Switching {entity.name} after {click_mode} click on {switch_event.button_name}")
             switch_dobiss_entity(button_entity_map[switch_event.button_name][click_mode])
-            lockout_timestamp = time.time() + 0.2  # ignore button presses for the next 0.2 seconds to avoid double releases
+            lockout_timestamp = time.time() + BUTTON_LOCKOUT_PERIOD  # ignore button presses for the next 0.2 seconds to avoid double releases
 
 
 def create_button_entity_map(dobiss_entities: dict):
