@@ -5,7 +5,8 @@ import time
 
 from serial import Serial, SerialException
 
-from config.config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS
+from config.config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS, \
+    MIN_IDENTICAL_ONE_WIRE_MESSAGES
 from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
 from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS
 
@@ -106,7 +107,6 @@ def parse_message(message: OneWireMessage, button_down_message: OneWireMessage, 
 
 def message_handler(message_queue: list, switch_event_queue: Queue):
     button_down_message = None
-    min_identical_msg = 2
     previous_loop = []
     while True:
         while len(message_queue) > 0:
@@ -120,7 +120,7 @@ def message_handler(message_queue: list, switch_event_queue: Queue):
                 else:
                     previous_loop.append(message)
 
-                if len(previous_loop) >= min_identical_msg:
+                if len(previous_loop) >= MIN_IDENTICAL_ONE_WIRE_MESSAGES:
                     button_down_message = parse_message(message, button_down_message, switch_event_queue)
                     previous_loop = []
 

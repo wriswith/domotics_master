@@ -10,3 +10,5 @@ ACTIVE_PICO_PINS = [13, 14, 15]
 
 CAN_INTERFACE = "socketcan"
 CAN_CHANNEL = "can0"
+
+
