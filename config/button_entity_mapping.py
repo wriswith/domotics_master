@@ -30,6 +30,7 @@ BUTTON_ENTITY_MAP = {
     "keuken_3": {'short': 'Berging', 'long': 'Berging'},
     "berging_1": {'short': 'Berging', 'long': 'Garage'},
     "garage_poort_1": {'short': 'Garage', 'long': None},
+    "garage_deur_1": {'short': 'Garage', 'long': 'Berging'},
     "trap_beneden_1": {'short': 'Trap', 'long': None},
     "trap_wasplaats_1": {'short': 'Trap', 'long': 'Trap'},
     "trap_voorkant_1": {'short': 'Trap', 'long': 'Trap'},
