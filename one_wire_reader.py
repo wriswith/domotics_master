@@ -6,6 +6,7 @@ import time
 from serial import Serial, SerialException
 
 from config.config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS
+from logger import logger
 from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
 from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS
 
@@ -20,7 +21,7 @@ def serial_reader_thread(message_queues: dict):
         # Open serial connection
         with Serial(SERIAL_PORT, SERIAL_BAUD_RATE, timeout=1) as ser:
             buffer = ""
-            print(f"Listening on {SERIAL_PORT} at {SERIAL_BAUD_RATE} baud...")
+            logger.info(f"Listening on {SERIAL_PORT} at {SERIAL_BAUD_RATE} baud...")
             time.sleep(2)  # Wait for Pico to reset after opening port (important for some boards)
 
             while True:
@@ -42,9 +43,9 @@ def serial_reader_thread(message_queues: dict):
                 time.sleep(0.01)
 
     except SerialException as e:
-        print(f"Serial error: {e}")
+        logger.error(f"Serial error: {e}")
     except KeyboardInterrupt:
-        print("Interrupted by user.")
+        logger.info("Interrupted by user.")
 
 
 def button_released(button_down_message: OneWireMessage, release_message: OneWireMessage, switch_event_queue: Queue):
@@ -57,21 +58,21 @@ def button_released(button_down_message: OneWireMessage, release_message: OneWir
         if len(button_name) > 0:
             with open(DISCOVERY_OUTPUT_FILE, 'at') as discovery_file:
                 discovery_file.write(f'"{button_down_message.circuit_id}": "{button_name}",\r\n')
-    print(f"Released button {button_down_message.get_button_label()}")
+    logger.debug(f"Released button {button_down_message.get_button_label()}")
 
 
 def button_pressed(message: OneWireMessage, switch_event_queue: Queue):
     switch_event_queue.put(SwitchEvent(circuit_id=message.circuit_id,
                                        action=SWITCH_ACTION_PRESS,
                                        duration=0))
-    print(f"Button pressed ({message.get_button_label()})")
+    logger.debug(f"Button pressed ({message.get_button_label()})")
 
 
 def button_held(button_down_message: OneWireMessage, current_message: OneWireMessage, switch_event_queue: Queue):
     switch_event_queue.put(SwitchEvent(circuit_id=button_down_message.circuit_id,
                                        action=SWITCH_ACTION_RELEASE,
                                        duration=(current_message.frame_number - button_down_message.frame_number) * 0.05))
-    print(f"Button held ({button_down_message.get_button_label()})")
+    logger.debug(f"Button held ({button_down_message.get_button_label()})")
 
 
 def is_divergent_message(messages, message):
@@ -112,7 +113,7 @@ def message_handler(message_queue: list, switch_event_queue: Queue):
         while len(message_queue) > 0:
             message = message_queue.pop(0)
             if message.message_type == MT_INVALID:
-                print(f"invalid_msg ({message.pin}_{message.circuit_id})")
+                logger.debug(f"invalid_msg ({message.pin}_{message.circuit_id})")
                 pass  # Drop invalid messages
             else:
                 if is_divergent_message(previous_loop, message):

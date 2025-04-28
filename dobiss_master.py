@@ -4,6 +4,7 @@ from queue import Queue
 from can_bus_control import update_status_of_entities, switch_dobiss_entity
 from config.button_entity_mapping import BUTTON_ENTITY_MAP
 from config.config import ACTIVE_PICO_PINS, SHORT_PRESS_CUTOFF
+from logger import logger
 from objects.dobiss_entity import DobissEntity
 from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG
 from objects.switch_event import SWITCH_ACTION_RELEASE
@@ -25,7 +26,7 @@ def handle_button_events(switch_event_queue, button_entity_map):
         switch_event = switch_event_queue.get()
         if lockout_timestamp is not None:
             if time.time() < lockout_timestamp:
-                print(f"Dropping a button in the lockout period.")
+                logger.debug(f"Dropping a button in the lockout period.")
                 continue
             else:
                 lockout_timestamp = None

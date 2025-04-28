@@ -3,6 +3,7 @@ import can
 from can import Message
 
 from config.config import CAN_CHANNEL, CAN_INTERFACE
+from logger import logger
 from objects.dobiss_entity import DobissEntity
 from config.dobiss_entity_config import DOBISS_MODULES, DOBISS_DIMMER
 from objects.dobiss_module import DobissModule
@@ -50,7 +51,7 @@ def send_can_message(message: Message, bus: can.interface.Bus):
         bus.send(message)
         return True
     except can.CanError as e:
-        print(f"Message NOT sent: {e}")
+        logger.error(f"Message NOT sent: {e}")
         raise e
     finally:
         bus.shutdown()
@@ -77,8 +78,8 @@ def update_status_of_entities(dobiss_entities):
                 raise Exception(f"Failed to get a response when requesting status from module {module.module_number}.")
 
             complete_response += response.data
-            # print(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
-        # print(f"Complete response: {complete_response.hex()}")
+            logger.debug(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
+        logger.debug(f"Complete response: {complete_response.hex()}")
         parse_status_response(complete_response, dobiss_entities, module.module_number)
 
     bus.shutdown()

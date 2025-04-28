@@ -2,6 +2,7 @@ import re
 
 from config.button_names_config import CIRCUIT_ID_BUTTON_MAPPING
 from config.config import ALLOW_NEW_CIRCUIT_IDS
+from logger import logger
 
 MT_HEARTBEAT = "heartbeat"
 MT_INVALID = "invalid"
@@ -32,7 +33,7 @@ class OneWireMessage:
                     self.message_type = MT_CIRCUIT_ID
                 else:
                     self.message_type = MT_INVALID
-                    print(f"Dropping invalid circuit ID.")
+                    logger.debug(f"Dropping invalid circuit ID.")
             else:
                 raise Exception(f"Unable to parse raw message: {raw_message}")
 
@@ -46,12 +47,12 @@ class OneWireMessage:
         """
         bytes = self.circuit_id.split(" ")
         if self.circuit_id == "00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000":
-            print(f"All zero circuit_id, bus down? (pin: {self.pin})")
+            logger.debug(f"All zero circuit_id, bus down? (pin: {self.pin})")
         if bytes[5] != "00000000" and bytes[6] != "00000000":
-            print(f"Bytes 6 and 7 are not 0. ({self.circuit_id})")
+            logger.debug(f"Bytes 6 and 7 are not 0. ({self.circuit_id})")
             return False
         if self.circuit_id not in CIRCUIT_ID_BUTTON_MAPPING and not ALLOW_NEW_CIRCUIT_IDS:
-            print(f"Unknown circuit id detected: {self.circuit_id}")
+            logger.debug(f"Unknown circuit id detected: {self.circuit_id}")
             return False
         return True
 
