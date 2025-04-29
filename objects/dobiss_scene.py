@@ -19,3 +19,5 @@ class DobissScene(DobissEntity):
             else:
                 entity.set_status(status_tuple[0], status_tuple[1])
 
+    def switch_status(self):
+        self.set_status(1)

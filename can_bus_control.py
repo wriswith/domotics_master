@@ -36,17 +36,6 @@ def send_dobiss_command(module_id, msg_data):
     send_can_message(msg, bus)
 
 
-# def switch_dobiss_entity(entity: DobissEntity):
-#     """
-#     Switch the status of the entity (reverse on or off)
-#     :param entity:
-#     :return:
-#     """
-#     bus = get_can_bus()
-#     msg = create_can_message(entity.module_id, entity.get_msg_to_switch_status())
-#     send_can_message(msg, bus)
-
-
 def create_can_message(arbitration_id: int, data: bytes):
     return can.Message(
         arbitration_id=arbitration_id,
@@ -72,10 +61,9 @@ def send_can_message(message: Message, bus: can.interface.Bus):
         bus.shutdown()
 
 
-def get_modules_status(dobiss_entities):
+def get_modules_statuses():
     """
     Get the status of all outputs of every object and update the entity objects accordingly.
-    :param dobiss_entities:
     :return:
     """
     result = {}
@@ -97,20 +85,3 @@ def get_modules_status(dobiss_entities):
         logger.debug(f"Complete response: {complete_response.hex()}")
         result[module.module_number] = complete_response
     return result
-
-
-
-
-def pivot_entity_dict(dobiss_entities):
-    """
-    Return a dict with module and output as key instead of entity_name.
-    :param dobiss_entities:
-    :return:
-    """
-    module_output_dict = {}
-    for name in dobiss_entities:
-        entity = dobiss_entities[name]
-        if entity.module_number not in module_output_dict:
-            module_output_dict[entity.module_number] = {}
-        module_output_dict[entity.module_number][entity.output] = entity
-    return module_output_dict

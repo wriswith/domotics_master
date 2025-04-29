@@ -11,6 +11,7 @@ from logger import logger
 from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
 from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS, SWITCH_ACTION_HOLD
 
+
 def serial_reader_thread(message_queues: dict):
     """
     Receive the messages from the pico pi and put them into the "queue" for handling.

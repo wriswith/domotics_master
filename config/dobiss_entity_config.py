@@ -2,6 +2,7 @@
 DOBISS_RELAY = 'relay'
 DOBISS_DIMMER = 'dimmer'
 DOBISS_SCENE = 'scene'
+DOBISS_SHADE = 'shade'
 LIGHT = 'light'
 VENTILATION = 'fan'
 SHADE = 'cover'
@@ -37,9 +38,9 @@ DOBISS_LIGHTS_CONFIG = {
 }
 
 DOBISS_SHADES_CONFIG = {
-  "Salon": {"output_up": {"module": 2, "output": 6}, "output_down": {"module": 2, "output": 7}, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-  "Speelkamer": {"output_up": {"module": 2, "output": 10}, "output_down": {"module": 2, "output": 11}, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-  "Slaapkamer Ouders": {"output_up": {"module": 4, "output": 7}, "output_down": {"module": 4, "output": 6}, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
+  "Shade_Salon": {"output_up": {"module": 2, "output": 6}, "output_down": {"module": 2, "output": 7}, "dobiss_type": DOBISS_SHADE, "ha_type": SHADE},
+  "Shade_Speelkamer": {"output_up": {"module": 2, "output": 10}, "output_down": {"module": 2, "output": 11}, "dobiss_type": DOBISS_SHADE, "ha_type": SHADE},
+  "Shade_Slaapkamer Ouders": {"output_up": {"module": 4, "output": 7}, "output_down": {"module": 4, "output": 6}, "dobiss_type": DOBISS_SHADE, "ha_type": SHADE},
 }
 
 DOBISS_SCENES_CONFIG = {

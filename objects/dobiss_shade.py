@@ -5,6 +5,7 @@ from objects.dobiss_relays import DobissRelays
 SHADE_STATUS_UP = 'shade up'
 SHADE_STATUS_DOWN = 'shade down'
 
+
 class DobissShade(DobissEntity):
     def __init__(self, name: str, relays_up: DobissRelays, relays_down: DobissRelays):
         super().__init__(SHADE, name)

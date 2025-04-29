@@ -23,6 +23,9 @@ class DobissEntity:
     def set_status(self, new_status, brightness=100):
         raise NotImplementedError(f"This method needs to be overridden by child classes. ({self})")
 
+    def switch_status(self):
+        raise NotImplementedError(f"This method needs to be overridden by child classes. ({self})")
+
     def get_device_type_hex(self):
         if self.dobiss_type == DOBISS_RELAY:
             return b'\x08'
