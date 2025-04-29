@@ -1,9 +1,11 @@
 
 DOBISS_RELAY = 'relay'
 DOBISS_DIMMER = 'dimmer'
+DOBISS_SCENE = 'scene'
 LIGHT = 'light'
 VENTILATION = 'fan'
 SHADE = 'cover'
+
 
 DOBISS_LIGHTS_CONFIG = {
     "TV Wand": {"module": 1, "output": 1, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},

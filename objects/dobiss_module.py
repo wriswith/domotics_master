@@ -27,3 +27,4 @@ class DobissModule:
     def get_status_can_id(self):
         return self.module_can_id - 1
 
+

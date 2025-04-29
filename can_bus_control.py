@@ -16,9 +16,19 @@ I set the bitrate to 125000 at device detection with a udev rule.
     - Reload the rules 'sudo udevadm control --reload'
 """
 
+_bus = None
 
 def get_can_bus():
-    return can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
+    global _bus
+    if _bus is None:
+        return can.interface.Bus(channel=CAN_CHANNEL, interface=CAN_INTERFACE)
+    else:
+        return _bus
+
+def send_dobiss_command(module_id, msg_data):
+    bus = get_can_bus()
+    msg = create_can_message(module_id, msg_data)
+    send_can_message(msg, bus)
 
 
 def switch_dobiss_entity(entity: DobissEntity):
