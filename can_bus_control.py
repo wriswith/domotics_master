@@ -3,10 +3,13 @@ import can
 from can import Message
 
 from config.config import CAN_CHANNEL, CAN_INTERFACE
+from config.dobiss_entity_config import DOBISS_MODULES
 from logger import logger
-from objects.dobiss_entity import DobissEntity
-from config.dobiss_entity_config import DOBISS_MODULES, DOBISS_DIMMER
 from objects.dobiss_module import DobissModule
+
+# from objects.dobiss_entity import DobissEntity
+# from config.dobiss_entity_config import DOBISS_MODULES, DOBISS_DIMMER
+# from objects.dobiss_module import DobissModule
 
 """
 I made use of the  DSD TECH USB to CAN-bus SH-C30A.
@@ -18,6 +21,7 @@ I set the bitrate to 125000 at device detection with a udev rule.
 
 _bus = None
 
+
 def get_can_bus():
     global _bus
     if _bus is None:
@@ -25,21 +29,22 @@ def get_can_bus():
     else:
         return _bus
 
+
 def send_dobiss_command(module_id, msg_data):
     bus = get_can_bus()
     msg = create_can_message(module_id, msg_data)
     send_can_message(msg, bus)
 
 
-def switch_dobiss_entity(entity: DobissEntity):
-    """
-    Switch the status of the entity (reverse on or off)
-    :param entity:
-    :return:
-    """
-    bus = get_can_bus()
-    msg = create_can_message(entity.module_id, entity.get_msg_to_switch_status())
-    send_can_message(msg, bus)
+# def switch_dobiss_entity(entity: DobissEntity):
+#     """
+#     Switch the status of the entity (reverse on or off)
+#     :param entity:
+#     :return:
+#     """
+#     bus = get_can_bus()
+#     msg = create_can_message(entity.module_id, entity.get_msg_to_switch_status())
+#     send_can_message(msg, bus)
 
 
 def create_can_message(arbitration_id: int, data: bytes):
@@ -67,13 +72,13 @@ def send_can_message(message: Message, bus: can.interface.Bus):
         bus.shutdown()
 
 
-def update_status_of_entities(dobiss_entities):
+def get_modules_status(dobiss_entities):
     """
     Get the status of all outputs of every object and update the entity objects accordingly.
     :param dobiss_entities:
     :return:
     """
-    dobiss_entities = pivot_entity_dict(dobiss_entities)
+    result = {}
     bus = get_can_bus()
     for module_number in DOBISS_MODULES:
         module = DobissModule.config_to_dobiss_module(DOBISS_MODULES[module_number])
@@ -90,36 +95,10 @@ def update_status_of_entities(dobiss_entities):
             complete_response += response.data
             logger.debug(f"Received packet: ID=0x{response.arbitration_id:X}, Data={response.data.hex()}")
         logger.debug(f"Complete response: {complete_response.hex()}")
-        parse_status_response(complete_response, dobiss_entities, module.module_number)
+        result[module.module_number] = complete_response
+    return result
 
-    bus.shutdown()
 
-
-def parse_status_response(response: bytes, dobiss_entities, module_number: int):
-    """
-    Parse the response of a module to the status of the individual outputs.
-    :param response:
-    :param dobiss_entities:
-    :param module_number:
-    :return:
-    """
-    output_number = 0
-    for response_byte in response:
-        if response_byte == 0xff:
-            break  # no more outputs
-        else:
-            output_number += 1
-            if output_number in dobiss_entities[module_number]:
-                entity = dobiss_entities[module_number][output_number]
-                if entity.dobiss_type == DOBISS_DIMMER:
-                    if response_byte == 0:
-                        entity.current_status = 0
-                        entity.current_brightness = 0
-                    else:
-                        entity.current_status = 1
-                        entity.current_brightness = response_byte
-                else:
-                    dobiss_entities[module_number][output_number].current_status = response_byte
 
 
 def pivot_entity_dict(dobiss_entities):

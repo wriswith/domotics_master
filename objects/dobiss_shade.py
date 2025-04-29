@@ -28,9 +28,7 @@ class DobissShade(DobissEntity):
         else:
             self.set_status(SHADE_STATUS_DOWN)
 
-    def set_status(self, new_status):
-        if self.status == new_status:
-            pass
+    def set_status(self, new_status, brightness=100):
         self.status = new_status
         if self.status == SHADE_STATUS_UP:
             self.relays_up.set_status(1)

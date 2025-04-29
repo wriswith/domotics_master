@@ -10,28 +10,6 @@ class DobissEntity:
         self.current_brightness = 100  # for dimmers this represents the brightness and the max value is 100
 
     @staticmethod
-    def config_to_dobiss_entity(config_dict, entity_name):
-        """
-
-        :param config_dict:
-        :param entity_name:
-        :return: DobissEntity
-        """
-        return DobissEntity(config_dict['module'], config_dict['output'], config_dict['dobiss_type'], entity_name)
-
-    @staticmethod
-    def shade_config_to_dobiss_entity(config_array, entity_name, action):
-        """
-
-        :param action:
-        :param config_array:
-        :param entity_name:
-        :return: DobissEntity
-        """
-        return DobissEntity(config_array[f'output_{action}']['module'], config_array[f'output_{action}']['output'],
-                            config_array['dobiss_type'], entity_name)
-
-    @staticmethod
     def convert_name_to_entity_name(name):
         return name.replace(' ', '_').lower()
 
@@ -41,6 +19,9 @@ class DobissEntity:
 
     def get_entity_name(self):
         return DobissEntity.convert_name_to_entity_name(self.name)
+
+    def set_status(self, new_status, brightness=100):
+        raise NotImplementedError(f"This method needs to be overridden by child classes. ({self})")
 
     def get_device_type_hex(self):
         if self.dobiss_type == DOBISS_RELAY:

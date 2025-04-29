@@ -22,6 +22,3 @@ class DobissOutput(DobissEntity):
     def get_msg_to_set_status(self, brightness=100):
         return (b'' + self.get_full_address() + self.current_status.to_bytes(1, 'big') + b'\xff\xff'
                 + DobissEntity.convert_int_to_hex(brightness) + b'\xff\xff')
-
-
-

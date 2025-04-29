@@ -13,7 +13,7 @@ class DobissDimmer(DobissOutput):
         else:
             self.set_status(0, 0)
 
-    def set_status(self, new_status, new_brightness):
+    def set_status(self, new_status, new_brightness=100):
         self.current_status = new_status
         self.current_brightness = new_brightness
         send_dobiss_command(self.module_id, self.get_msg_to_set_status(self.current_brightness))

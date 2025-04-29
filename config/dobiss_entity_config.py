@@ -34,12 +34,6 @@ DOBISS_LIGHTS_CONFIG = {
     "Zolder": {"module": 4, "output": 2, "dobiss_type": DOBISS_RELAY, "ha_type": LIGHT},
     "Ventilatie": {"module": 4, "output": 3, "dobiss_type": DOBISS_RELAY, "ha_type": VENTILATION},
     "Boost": {"module": 4, "output": 4, "dobiss_type": DOBISS_RELAY, "ha_type": VENTILATION},
-    "Salon up": {"module": 2, "output": 6, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-    "Salon down": {"module": 2, "output": 7, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-    "Speelkamer up": {"module": 2, "output": 10, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-    "Speelkamer down": {"module": 2, "output": 11, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-    "Slaapkamer Ouders up": {"module": 4, "output": 7, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
-    "Slaapkamer Ouders down": {"module": 4, "output": 6, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
 }
 
 DOBISS_SHADES_CONFIG = {
@@ -48,10 +42,30 @@ DOBISS_SHADES_CONFIG = {
   "Slaapkamer Ouders": {"output_up": {"module": 4, "output": 7}, "output_down": {"module": 4, "output": 6}, "dobiss_type": DOBISS_RELAY, "ha_type": SHADE},
 }
 
-SCENES = {
-    "Alles uit": {0: list(DOBISS_LIGHTS_CONFIG.keys())},
-    "Boven uit": {0: 'todo: list all entities upstairs'},
+DOBISS_SCENES_CONFIG = {
+    "Alles uit": [],
+    "Boven uit": [
+                    ("Bureau Beestje", (0, )),
+                    ("Slaapkamer Daniel", (0, )),
+                    ("Slaapkamer Ouders", (0, )),
+                    ("Trap", (0, )),
+                    ("Dressing", (0, )),
+                    ("Spiegel", (0, )),
+                    ("Badkamer", (0, )),
+                    ("Douche", (0, )),
+                    ("Wasplaats", (0, )),
+                    ("Technische Ruimte", (0, )),
+                    ("Zolder", (0, )),
+                  ],
 }
+
+
+def generate_alles_uit_scene():
+    for light_name in DOBISS_LIGHTS_CONFIG.keys():
+        DOBISS_SCENES_CONFIG["Alles uit"].append((light_name, (0, )))
+
+
+generate_alles_uit_scene()
 
 # List of all the modules in the system. Every module has the following attributes
 # module_number: The module number as used in the dobiss configuration software
