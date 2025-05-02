@@ -65,7 +65,7 @@ void receive_byte(uint PIN){
 
 
 
-int communication_cycle(uint PIN, long counter){
+int communication_cycle(uint PIN, unsigned long counter){
     // send a reset pulse and handle communication with slave if present
 
     // Start communication with 607 microseconds drop of bus
@@ -133,7 +133,7 @@ int main()
 {
     stdio_uart_init();  // <--- Use UART0 (GP0 TX, GP1 RX)
 
-    long counters[] = {0, 0, 0};
+    unsigned long counters[] = {0, 0, 0};
     // stdio_init_all();
     int ms_passed = 0;
     bool last_pulse_was_command = false;
