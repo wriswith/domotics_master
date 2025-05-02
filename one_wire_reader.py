@@ -28,7 +28,11 @@ def serial_reader_thread(message_queues: dict):
 
             while True:
                 if ser.in_waiting > 0:
-                    line = ser.readline().decode('utf-8').strip()
+                    try:
+                        line = ser.readline().decode('utf-8').strip()
+                    except UnicodeDecodeError as e:
+                        logger.error(f"Read error on UART ({e})")
+                        continue
                     buffer += line
 
                     # every message ends with '###'. If this pattern is detected, there should be a message in the buffer.
