@@ -4,7 +4,7 @@
 
 BUTTON_ENTITY_MAP = {
     "zolder_1": {'short': 'Zolder', 'long': 'Zolder'},
-    "zolder_2": {'short': 'Technische Ruimte', 'long': 'Technische Ruimte'},
+    "zolder_2": {'short': 'Technische Ruimte', 'long': 'SCENE Alles uit'},
     "kookplaat_1": {'short': 'Keuken Spots', 'long': 'Boost'},
     "speelkamer_screen_1": {'short': 'Shade_Speelkamer_up', 'long': 'Shade_Speelkamer_up'},
     "speelkamer_screen_2": {'short': 'Shade_Speelkamer_down', 'long': 'Shade_Speelkamer_down'},

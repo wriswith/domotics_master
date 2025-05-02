@@ -44,8 +44,8 @@ DOBISS_SHADES_CONFIG = {
 }
 
 DOBISS_SCENES_CONFIG = {
-    "Alles uit": [],
-    "Boven uit": [
+    "SCENE Alles uit": [],
+    "SCENE Boven uit": [
                     ("Bureau Beestje", (0, )),
                     ("Slaapkamer Daniel", (0, )),
                     ("Slaapkamer Ouders", (0, )),
@@ -63,7 +63,7 @@ DOBISS_SCENES_CONFIG = {
 
 def generate_alles_uit_scene():
     for light_name in DOBISS_LIGHTS_CONFIG.keys():
-        DOBISS_SCENES_CONFIG["Alles uit"].append((light_name, (0, )))
+        DOBISS_SCENES_CONFIG["SCENE Alles uit"].append((light_name, (0, )))
 
 
 generate_alles_uit_scene()
