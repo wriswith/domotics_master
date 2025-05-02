@@ -3,8 +3,6 @@ from config.dobiss_entity_config import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_MODU
 
 class DobissEntity:
     def __init__(self, dobiss_type: str = None, name: str = None):
-        if dobiss_type not in (DOBISS_RELAY, DOBISS_DIMMER):
-            raise ValueError(f"dobiss_type should be {DOBISS_RELAY} or {DOBISS_DIMMER} not {dobiss_type}.")
         self.dobiss_type = dobiss_type
         self.name = name
         self.current_brightness = 100  # for dimmers this represents the brightness and the max value is 100
