@@ -58,6 +58,10 @@ DOBISS_SCENES_CONFIG = {
                     ("Technische Ruimte", (0, )),
                     ("Zolder", (0, )),
                   ],
+    "SCENE douche": [
+                    ("Douche", (1, )),
+                    ("Boost", (1, )),
+                  ],
 }
 
 
