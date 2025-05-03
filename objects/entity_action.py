@@ -1,3 +1,4 @@
+from config.dobiss_entity_config import ACTION_SWITCH, ACTION_TURN_ON, ACTION_TURN_OFF
 from objects.dobiss_entity import DobissEntity
 
 
