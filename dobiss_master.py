@@ -45,8 +45,11 @@ def handle_button_events(switch_event_queue, button_entity_map):
             if switch_event.duration > SHORT_PRESS_CUTOFF:
                 click_mode = 'long'
             entity = button_entity_map[switch_event.button_name][click_mode]
-            logger.info(f"Switching {entity.name} after {click_mode} click on {switch_event.button_name}")
-            entity.switch_status()
+            try:
+                logger.info(f"Switching {entity.name} after {click_mode} click on {switch_event.button_name}")
+                entity.switch_status()
+            except Exception as e:
+                logger.error(f"Failed to switch {entity}: {e}")
             lockout_timestamp = time.time() + BUTTON_LOCKOUT_PERIOD  # ignore button presses for the next 0.2 seconds to avoid double releases
 
 
