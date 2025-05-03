@@ -7,6 +7,13 @@ LIGHT = 'light'
 VENTILATION = 'fan'
 SHADE = 'cover'
 
+ACTION_SWITCH = 'switch'
+ACTION_TURN_ON = 'turn_on'
+ACTION_TURN_OFF = 'turn_off'
+ACTION_SET_STATUS = 'set_status'
+ACTION_SCHEDULE = 'schedule'
+ACTION_CALL_FUNCTION = 'call_function'
+
 
 DOBISS_LIGHTS_CONFIG = {
     "TV Wand": {"module": 1, "output": 1, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},
@@ -46,28 +53,28 @@ DOBISS_SHADES_CONFIG = {
 DOBISS_SCENES_CONFIG = {
     "SCENE Alles uit": [],
     "SCENE Boven uit": [
-                    ("Bureau Beestje", (0, )),
-                    ("Slaapkamer Daniel", (0, )),
-                    ("Slaapkamer Ouders", (0, )),
-                    ("Trap", (0, )),
-                    ("Dressing", (0, )),
-                    ("Spiegel", (0, )),
-                    ("Badkamer", (0, )),
-                    ("Douche", (0, )),
-                    ("Wasplaats", (0, )),
-                    ("Technische Ruimte", (0, )),
-                    ("Zolder", (0, )),
+                    ("Bureau Beestje", ACTION_TURN_OFF),
+                    ("Slaapkamer Daniel", ACTION_TURN_OFF),
+                    ("Slaapkamer Ouders", ACTION_TURN_OFF),
+                    ("Trap", ACTION_TURN_OFF),
+                    ("Dressing", ACTION_TURN_OFF),
+                    ("Spiegel", ACTION_TURN_OFF),
+                    ("Badkamer", ACTION_TURN_OFF),
+                    ("Douche", ACTION_TURN_OFF),
+                    ("Wasplaats", ACTION_TURN_OFF),
+                    ("Technische Ruimte", ACTION_TURN_OFF),
+                    ("Zolder", ACTION_TURN_OFF),
                   ],
     "SCENE douche": [
-                    ("Douche", (1, )),
-                    ("Boost", (1, )),
+                    ("Douche", ACTION_SWITCH),
+                    ("Boost", ACTION_TURN_ON),
                   ],
 }
 
 
 def generate_alles_uit_scene():
     for light_name in DOBISS_LIGHTS_CONFIG.keys():
-        DOBISS_SCENES_CONFIG["SCENE Alles uit"].append((light_name, (0, )))
+        DOBISS_SCENES_CONFIG["SCENE Alles uit"].append((light_name, ACTION_TURN_OFF))
 
 
 generate_alles_uit_scene()
