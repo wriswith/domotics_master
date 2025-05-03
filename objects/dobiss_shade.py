@@ -1,4 +1,4 @@
-from config.dobiss_entity_config import SHADE
+from config.constants import SHADE
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relays import DobissRelays
 

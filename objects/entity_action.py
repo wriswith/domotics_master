@@ -1,7 +1,7 @@
-from config.dobiss_entity_config import ACTION_SWITCH, ACTION_TURN_ON, ACTION_TURN_OFF
+import threading
+
+from config.constants import ACTION_SWITCH, ACTION_TURN_ON, ACTION_TURN_OFF, ACTION_SCHEDULE
 from objects.dobiss_entity import DobissEntity
-
-
 
 
 class EntityAction:
@@ -17,5 +17,10 @@ class EntityAction:
             self.target_entity.set_status(1)
         elif self.action == ACTION_TURN_OFF:
             self.target_entity.set_status(0)
+        elif self.action == ACTION_SCHEDULE:
+            delay = self.named_arguments["delay"]
+            real_action = self.named_arguments["real_action"]
+            new_entity_action = EntityAction(self.target_entity, real_action, self.named_arguments["named_arguments"])
+            threading.Timer(delay, EntityAction.execute, (new_entity_action, )).start()
         else:
             raise NotImplementedError(f"The action {self.action} is not implemented.")

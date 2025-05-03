@@ -1,7 +1,7 @@
 import time
 from typing import List
 
-from config.dobiss_entity_config import DOBISS_SCENE
+from config.constants import DOBISS_SCENE
 from objects.dobiss_entity import DobissEntity
 from objects.entity_action import EntityAction
 

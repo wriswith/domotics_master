@@ -1,5 +1,5 @@
 from can_bus_control import send_dobiss_command
-from config.dobiss_entity_config import DOBISS_RELAY
+from config.constants import DOBISS_RELAY
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_output import DobissOutput
 

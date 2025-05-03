@@ -1,19 +1,5 @@
-
-DOBISS_RELAY = 'relay'
-DOBISS_DIMMER = 'dimmer'
-DOBISS_SCENE = 'scene'
-DOBISS_SHADE = 'shade'
-LIGHT = 'light'
-VENTILATION = 'fan'
-SHADE = 'cover'
-
-ACTION_SWITCH = 'switch'
-ACTION_TURN_ON = 'turn_on'
-ACTION_TURN_OFF = 'turn_off'
-ACTION_SET_STATUS = 'set_status'
-ACTION_SCHEDULE = 'schedule'
-ACTION_CALL_FUNCTION = 'call_function'
-
+from config.constants import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_SHADE, LIGHT, VENTILATION, SHADE, ACTION_SWITCH, \
+    ACTION_TURN_ON, ACTION_TURN_OFF, ACTION_SCHEDULE
 
 DOBISS_LIGHTS_CONFIG = {
     "TV Wand": {"module": 1, "output": 1, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},
@@ -65,9 +51,25 @@ DOBISS_SCENES_CONFIG = {
                     ("Technische Ruimte", ACTION_TURN_OFF),
                     ("Zolder", ACTION_TURN_OFF),
                   ],
+    "SCENE Beneden uit": [
+                    ("TV Wand", ACTION_TURN_OFF),
+                    ("Hal", ACTION_TURN_OFF),
+                    ("Toilet", ACTION_TURN_OFF),
+                    ("TV spots", ACTION_TURN_OFF),
+                    ("Eetkamer", ACTION_TURN_OFF),
+                    ("Speelkamer", ACTION_TURN_OFF),
+                    ("Voordeur", ACTION_TURN_OFF),
+                    ("Berging", ACTION_TURN_OFF),
+                    ("Keuken", ACTION_TURN_OFF),
+                    ("Ledstrip", ACTION_TURN_OFF),
+                    ("Keuken Spots", ACTION_TURN_OFF),
+                    ("Garage", ACTION_TURN_OFF),
+                    ("Bureau Pruts", ACTION_TURN_OFF),
+                  ],
     "SCENE douche": [
                     ("Douche", ACTION_SWITCH),
                     ("Boost", ACTION_TURN_ON),
+                    ("Boost", ACTION_SCHEDULE, {"delay": 1800, "real_action": ACTION_TURN_OFF, "named_arguments": {}}),
                   ],
 }
 

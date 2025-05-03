@@ -1,5 +1,6 @@
-from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_DIMMER, DOBISS_RELAY, DOBISS_SHADES_CONFIG, \
-    DOBISS_SCENE, DOBISS_SCENES_CONFIG, DOBISS_MODULES, DOBISS_SHADE
+from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_SHADES_CONFIG, \
+    DOBISS_SCENES_CONFIG, DOBISS_MODULES
+from config.constants import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_SCENE, DOBISS_SHADE
 from objects.dobiss_dimmer import DobissDimmer
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relays import DobissRelays
@@ -46,7 +47,10 @@ def generate_entities_from_config():
     for scene_name in DOBISS_SCENES_CONFIG:
         action_list = []
         for entity_tuple in DOBISS_SCENES_CONFIG[scene_name]:
-            action_list.append(EntityAction(entities[entity_tuple[0]], entity_tuple[1]))
+            if len(entity_tuple) == 2:
+                action_list.append(EntityAction(entities[entity_tuple[0]], entity_tuple[1]))
+            else:
+                action_list.append(EntityAction(entities[entity_tuple[0]], entity_tuple[1], entity_tuple[2]))
         entities[scene_name] = DobissScene(scene_name, action_list)
 
     entities_including_shade_relays = entities.copy()
