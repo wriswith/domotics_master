@@ -42,7 +42,7 @@ BUTTON_ENTITY_MAP = {
     "ouders_screen_1": {'short': 'Shade_Slaapkamer Ouders_up', 'long': 'Shade_Slaapkamer Ouders_up'},
     "ouders_screen_2": {'short': 'Shade_Slaapkamer Ouders_down', 'long': 'Shade_Slaapkamer Ouders_down'},
     "dressing_1": {'short': 'Dressing', 'long': 'Dressing'},
-    "badkamer_1": {'short': 'SCENE douche', 'long': 'SCENE douche'},
+    "badkamer_1": {'short': 'Badkamer', 'long': 'Badkamer'},
     "badkamer_2": {'short': 'Spiegel', 'long': 'Spiegel'},
     "badkamer_3": {'short': 'SCENE douche', 'long': 'SCENE douche'},
     "trap_zolder_1": {'short': 'Zolder', 'long': 'Zolder'},
