@@ -29,7 +29,18 @@ def generate_entities_from_config():
     for entity_name in DOBISS_LIGHTS_CONFIG:
         entity_config = DOBISS_LIGHTS_CONFIG[entity_name]
         if entity_config['dobiss_type'] == DOBISS_DIMMER:
-            entities[entity_name] = DobissDimmer(entity_name, entity_config['module'], entity_config['output'])
+            # read optional min/max brightness parameters
+            if "min_brightness" in entity_config:
+                min_brightness = entity_config['min_brightness']
+            else:
+                min_brightness = 1
+            if "max_brightness" in entity_config:
+                max_brightness = entity_config['max_brightness']
+            else:
+                max_brightness = 100
+
+            entities[entity_name] = DobissDimmer(entity_name, entity_config['module'], entity_config['output'],
+                                                 min_brightness, max_brightness)
         elif entity_config['dobiss_type'] == DOBISS_RELAY:
             entities[entity_name] = DobissRelays(entity_name, entity_config['module'], entity_config['output'])
         else:

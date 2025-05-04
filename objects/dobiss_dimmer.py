@@ -4,10 +4,10 @@ from objects.dobiss_output import DobissOutput
 
 
 class DobissDimmer(DobissOutput):
-    def __init__(self, name: str, module_number: int, output: int):
+    def __init__(self, name: str, module_number: int, output: int, min_brightness=1, max_brightness=100):
         super().__init__(DOBISS_DIMMER, name, module_number, output)
-        self.min_brightness = 0
-        self.max_brightness = 100
+        self.min_brightness = min_brightness
+        self.max_brightness = max_brightness
         self.next_brightness_in_cycle = None
         self.cycle_direction = "down"
 

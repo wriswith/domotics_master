@@ -3,7 +3,7 @@ from config.constants import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_SHADE, LIGHT, V
 
 DOBISS_LIGHTS_CONFIG = {
     "TV Wand": {"module": 1, "output": 1, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},
-    "Bureau Beestje": {"module": 1, "output": 2, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},
+    "Bureau Beestje": {"module": 1, "output": 2, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT, "max_brightness": 85, "min_brightness": 1},
     "Slaapkamer Daniel": {"module": 1, "output": 3, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},
     "Slaapkamer Ouders": {"module": 1, "output": 4, "dobiss_type": DOBISS_DIMMER, "ha_type": LIGHT},
     "Hal": {"module": 2, "output": 2, "dobiss_type": DOBISS_RELAY, "ha_type": LIGHT},
