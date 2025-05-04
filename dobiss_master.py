@@ -1,4 +1,5 @@
 import time
+import traceback
 from queue import Queue
 
 from can_bus_control import get_modules_statuses
@@ -50,6 +51,8 @@ def handle_button_events(switch_event_queue, button_entity_map):
                 entity.switch_status()
             except Exception as e:
                 logger.error(f"Failed to switch {entity}: {e}")
+                traceback.print_exc()
+
             lockout_timestamp = time.time() + BUTTON_LOCKOUT_PERIOD  # ignore button presses for the next 0.2 seconds to avoid double releases
 
 
