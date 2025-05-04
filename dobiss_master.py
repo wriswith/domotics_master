@@ -77,7 +77,7 @@ def convert_tuple_to_action_object(map_item: tuple):
         return None
 
     # If only the entity name is given, configure the default action "ACTION_SWITCH"
-    elif len(map_item) == 1:
+    elif type(map_item) is str:
         return EntityAction(target_entity=dobiss_entities[map_item[0]], action=ACTION_SWITCH)
 
     # If an action_type is configured, pass it to the action object
