@@ -1,5 +1,6 @@
 from can_bus_control import send_dobiss_command
 from config.constants import DOBISS_DIMMER
+from logger import logger
 from objects.dobiss_output import DobissOutput
 
 
@@ -14,9 +15,6 @@ class DobissDimmer(DobissOutput):
     def get_brightness_ratio(self):
         return (self.max_brightness - self.min_brightness) / 100
 
-    def get_next_brightness_in_cycle(self):
-        return int(self.next_brightness_in_cycle)
-
     def switch_status(self):
         if self.current_status == 0:
             self.set_status(1, self.max_brightness)
@@ -30,6 +28,7 @@ class DobissDimmer(DobissOutput):
         self.current_brightness = new_brightness
         if new_status == 0:
             self.next_brightness_in_cycle = None
+        logger.debug(f"Setting status of {self.name} to {new_status} (brightness={new_brightness})")
         send_dobiss_command(self.module_id, self.get_msg_to_set_status(self.current_brightness))
 
     def cycle_brightness(self):
