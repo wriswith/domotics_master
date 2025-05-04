@@ -7,7 +7,7 @@ class DobissDimmer(DobissOutput):
     def __init__(self, name: str, module_number: int, output: int):
         super().__init__(DOBISS_DIMMER, name, module_number, output)
         self.min_brightness = 0
-        self.max_brightness = 0
+        self.max_brightness = 100
         self.next_brightness_in_cycle = None
         self.cycle_direction = "down"
 
@@ -19,11 +19,13 @@ class DobissDimmer(DobissOutput):
 
     def switch_status(self):
         if self.current_status == 0:
-            self.set_status(1, 100)
+            self.set_status(1, self.max_brightness)
         else:
             self.set_status(0, 0)
 
     def set_status(self, new_status, new_brightness=100):
+        if new_brightness > self.max_brightness:
+            new_brightness = self.max_brightness
         self.current_status = new_status
         self.current_brightness = new_brightness
         if new_status == 0:

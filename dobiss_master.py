@@ -62,6 +62,7 @@ def handle_button_events(switch_event_queue, button_entity_map):
             if switch_event.duration > SHORT_PRESS_CUTOFF:
                 entity_action = button_entity_map[switch_event.button_name]["long"]
                 if entity_action.action == ACTION_CYCLE_DIMMER:
+                    logger.debug(f"Cycle dimmer {entity_action.target_entity.name}")
                     entity_action.execute()
 
 
