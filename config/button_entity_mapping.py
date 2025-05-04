@@ -1,3 +1,4 @@
+from config.constants import ACTION_CYCLE_DIMMER
 
 # Create a mapping between the button names and the relais names: {'short': '', 'long': ''}, possibly add relais parameters and
 # add a modifier for long and short press
@@ -46,6 +47,6 @@ BUTTON_ENTITY_MAP = {
     "badkamer_2": {'short': 'Spiegel', 'long': 'Spiegel'},
     "badkamer_3": {'short': 'SCENE douche', 'long': 'SCENE douche'},
     "trap_zolder_1": {'short': 'Zolder', 'long': 'Zolder'},
-    "beestje_1": {'short': 'Bureau Beestje', 'long': 'Bureau Beestje'},
+    "beestje_1": {'short': 'Bureau Beestje', 'long': ('Bureau Beestje', ACTION_CYCLE_DIMMER)},
     "wasplaats_1": {'short': 'Wasplaats', 'long': 'Wasplaats'},
 }
