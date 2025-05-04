@@ -5,11 +5,11 @@ from queue import Queue
 from can_bus_control import get_modules_statuses
 from config.button_entity_mapping import BUTTON_ENTITY_MAP
 from config.config import ACTIVE_PICO_PINS, SHORT_PRESS_CUTOFF, BUTTON_LOCKOUT_PERIOD
-from config.constants import ACTION_SWITCH
+from config.constants import ACTION_SWITCH, ACTION_CYCLE_DIMMER
 from dobiss_entity_helper import get_entities, parse_module_status_response
 from logger import logger
 from objects.entity_action import EntityAction
-from objects.switch_event import SWITCH_ACTION_RELEASE
+from objects.switch_event import SWITCH_ACTION_RELEASE, SWITCH_ACTION_HOLD
 from one_wire_reader import one_wire_reader
 
 
@@ -41,6 +41,7 @@ def handle_button_events(switch_event_queue, button_entity_map):
             else:
                 lockout_timestamp = None
 
+        # Parse regular actions on switch release
         if switch_event.action == SWITCH_ACTION_RELEASE:
             click_mode = 'short'
             if switch_event.duration > SHORT_PRESS_CUTOFF:
@@ -55,6 +56,13 @@ def handle_button_events(switch_event_queue, button_entity_map):
                 traceback.print_exc()
 
             lockout_timestamp = time.time() + BUTTON_LOCKOUT_PERIOD  # ignore button presses for the next 0.2 seconds to avoid double releases
+
+        # Parse dimmer cycle on long holds
+        if switch_event.action == SWITCH_ACTION_HOLD:
+            if switch_event.duration > SHORT_PRESS_CUTOFF:
+                entity_action = button_entity_map[switch_event.button_name]["long"]
+                if entity_action.action == ACTION_CYCLE_DIMMER:
+                    entity_action.execute()
 
 
 def create_button_entity_map():
