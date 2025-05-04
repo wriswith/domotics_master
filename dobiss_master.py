@@ -49,7 +49,7 @@ def handle_button_events(switch_event_queue, button_entity_map):
             try:
                 logger.info(f"Executing action {entity_action.action} on {entity_action.target_entity.name} after "
                             f"{click_mode} click on {switch_event.button_name}")
-                entity_action.trigger()
+                entity_action.execute()
             except Exception as e:
                 logger.error(f"Failed to switch {entity_action}: {e}")
                 traceback.print_exc()
