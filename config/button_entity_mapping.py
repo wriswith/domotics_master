@@ -32,7 +32,7 @@ BUTTON_ENTITY_MAP = {
     "garage_poort_1": {'short': 'Garage', 'long': 'SCENE Alles uit'},
     "garage_deur_1": {'short': 'Garage', 'long': 'Berging'},
     "trap_beneden_1": {'short': 'Trap', 'long': 'SCENE Boven uit'},
-    "trap_wasplaats_1": {'short': 'Trap', 'long': 'Trap'},
+    "trap_wasplaats_1": {'short': 'Trap', 'long': 'SCENE Beneden uit'},
     "trap_voorkant_1": {'short': 'Trap', 'long': 'Trap'},
     "trap_ouders_1": {'short': 'Trap', 'long': 'Trap'},
     "trap_badkamer_1": {'short': 'Trap', 'long': 'Trap'},
