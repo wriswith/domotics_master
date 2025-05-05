@@ -3,7 +3,7 @@ from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_SHADES_CONF
 from config.constants import DOBISS_RELAY, DOBISS_DIMMER, DOBISS_SCENE, DOBISS_SHADE
 from objects.dobiss_dimmer import DobissDimmer
 from objects.dobiss_entity import DobissEntity
-from objects.dobiss_relays import DobissRelays
+from objects.dobiss_relay import DobissRelay
 from objects.dobiss_scene import DobissScene
 from objects.dobiss_shade import DobissShade
 from objects.entity_action import EntityAction
@@ -42,16 +42,16 @@ def generate_entities_from_config():
             entities[entity_name] = DobissDimmer(entity_name, entity_config['module'], entity_config['output'],
                                                  min_brightness, max_brightness)
         elif entity_config['dobiss_type'] == DOBISS_RELAY:
-            entities[entity_name] = DobissRelays(entity_name, entity_config['module'], entity_config['output'])
+            entities[entity_name] = DobissRelay(entity_name, entity_config['module'], entity_config['output'])
         else:
             NotImplementedError()
 
     for shade_name in DOBISS_SHADES_CONFIG:
         shade_config = DOBISS_SHADES_CONFIG[shade_name]
-        shade_up_entity = DobissRelays(f"{shade_name}_up", shade_config["output_up"]['module'],
-                                       shade_config["output_up"]['output'])
-        shade_down_entity = DobissRelays(f"{shade_name}_down", shade_config["output_down"]['module'],
-                                         shade_config["output_down"]['output'])
+        shade_up_entity = DobissRelay(f"{shade_name}_up", shade_config["output_up"]['module'],
+                                      shade_config["output_up"]['output'])
+        shade_down_entity = DobissRelay(f"{shade_name}_down", shade_config["output_down"]['module'],
+                                        shade_config["output_down"]['output'])
         entities[shade_name] = DobissShade(shade_name, shade_up_entity, shade_down_entity)
         shade_relay_entities.extend((shade_up_entity, shade_down_entity))
 
