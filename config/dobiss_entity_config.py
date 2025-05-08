@@ -75,6 +75,10 @@ DOBISS_SCENES_CONFIG = {
 
 
 def generate_alles_uit_scene():
+    """
+    Add a turn-off action for all non ventilation outputs to the "Alles uit" scene. Add pulsing garage light to signal
+    to the user that the scene was triggered.
+    """
     for light_name in DOBISS_LIGHTS_CONFIG.keys():
         if DOBISS_LIGHTS_CONFIG[light_name]["ha_type"] != VENTILATION:
             DOBISS_SCENES_CONFIG["SCENE Alles uit"].append((light_name, ACTION_TURN_OFF))
