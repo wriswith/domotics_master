@@ -67,7 +67,7 @@ def handle_button_hold(switch_event: SwitchEvent, button_entity_map):
             execute_action(actions_linked_to_button[BUTTON_LONG_INSTA], BUTTON_LONG_INSTA, switch_event.button_name)
             return switch_event.button_name  # Lock this button until it is released
         elif BUTTON_LONG_HOLD in actions_linked_to_button:
-            execute_action(actions_linked_to_button[BUTTON_LONG_INSTA], BUTTON_LONG_INSTA, switch_event.button_name)
+            execute_action(actions_linked_to_button[BUTTON_LONG_HOLD], BUTTON_LONG_HOLD, switch_event.button_name)
 
     return None
 
