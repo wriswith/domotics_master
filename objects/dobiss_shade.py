@@ -1,13 +1,13 @@
 from config.constants import SHADE
 from objects.dobiss_entity import DobissEntity
-from objects.dobiss_relays import DobissRelays
+from objects.dobiss_relay import DobissRelay
 
 SHADE_STATUS_UP = 'shade up'
 SHADE_STATUS_DOWN = 'shade down'
 
 
 class DobissShade(DobissEntity):
-    def __init__(self, name: str, relays_up: DobissRelays, relays_down: DobissRelays):
+    def __init__(self, name: str, relays_up: DobissRelay, relays_down: DobissRelay):
         super().__init__(SHADE, name)
         self.status = None
         self.relays_up = relays_up

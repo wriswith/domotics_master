@@ -3,7 +3,7 @@ from config.constants import DOBISS_RELAY
 from objects.dobiss_output import DobissOutput
 
 
-class DobissRelays(DobissOutput):
+class DobissRelay(DobissOutput):
     def __init__(self, name: str, module_number: int, output: int):
         super().__init__(DOBISS_RELAY, name, module_number, output)
 
