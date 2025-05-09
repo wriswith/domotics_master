@@ -7,9 +7,10 @@ from serial import Serial, SerialException
 
 from config.config import DISCOVERY_MODE, DISCOVERY_OUTPUT_FILE, SERIAL_PORT, SERIAL_BAUD_RATE, ACTIVE_PICO_PINS, \
     MIN_IDENTICAL_ONE_WIRE_MESSAGES
+from config.constants import SWITCH_ACTION_PRESS, SWITCH_ACTION_HOLD, SWITCH_ACTION_RELEASE
 from logger import logger
 from objects.one_wire_message import OneWireMessage, MT_INVALID, MT_CIRCUIT_ID, MT_HEARTBEAT
-from objects.switch_event import SwitchEvent, SWITCH_ACTION_RELEASE, SWITCH_ACTION_PRESS, SWITCH_ACTION_HOLD
+from objects.switch_event import SwitchEvent
 
 
 def serial_reader_thread(message_queues: dict):
@@ -109,8 +110,8 @@ def parse_message(message: OneWireMessage, button_down_message: OneWireMessage, 
         return None
     elif message.message_type == MT_CIRCUIT_ID:
         if button_down_message is None:
-                button_pressed(message, switch_event_queue)
-                return message
+            button_pressed(message, switch_event_queue)
+            return message
         elif message.circuit_id != button_down_message.circuit_id:
             button_released(button_down_message, message, switch_event_queue)
             button_pressed(message, switch_event_queue)

@@ -9,6 +9,5 @@ def button_discovery():
     serial_thread.start()
 
 
-
 if __name__ == '__main__':
     button_discovery()

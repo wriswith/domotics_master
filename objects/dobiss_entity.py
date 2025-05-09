@@ -1,4 +1,3 @@
-from config.dobiss_entity_config import DOBISS_MODULES
 from config.constants import DOBISS_RELAY, DOBISS_DIMMER
 
 

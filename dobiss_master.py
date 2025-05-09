@@ -1,16 +1,14 @@
-import time
-import traceback
 from queue import Queue
 
 from can_bus_control import get_modules_statuses
 from config.button_entity_mapping import BUTTON_ENTITY_MAP
-from config.config import ACTIVE_PICO_PINS, SHORT_PRESS_CUTOFF, BUTTON_LOCKOUT_PERIOD
-from config.constants import ACTION_SWITCH, ACTION_CYCLE_DIMMER
+from config.config import ACTIVE_PICO_PINS
+from config.constants import ACTION_SWITCH
 from dobiss_entity_helper import get_entities, parse_module_status_response
 from logger import logger
 from objects.entity_action import EntityAction
-from objects.switch_event import SWITCH_ACTION_RELEASE, SWITCH_ACTION_HOLD
 from one_wire_reader import one_wire_reader
+from switch_event_handler import handle_switch_events
 
 
 def dobiss_master():
@@ -27,43 +25,7 @@ def dobiss_master():
     one_wire_reader(ACTIVE_PICO_PINS, switch_event_queue)
 
     # Execute the actions related to the button events
-    handle_button_events(switch_event_queue, button_entity_map)
-
-
-def handle_button_events(switch_event_queue, button_entity_map):
-    lockout_timestamp = None  # Variable to set an epoch before which all buttons should be ignored (to avoid double clicks)
-    while True:
-        switch_event = switch_event_queue.get()
-        if lockout_timestamp is not None:
-            if time.time() < lockout_timestamp:
-                logger.debug(f"Dropping a button in the lockout period.")
-                continue
-            else:
-                lockout_timestamp = None
-
-        # Parse regular actions on switch release
-        if switch_event.action == SWITCH_ACTION_RELEASE:
-            click_mode = 'short'
-            if switch_event.duration > SHORT_PRESS_CUTOFF:
-                click_mode = 'long'
-            entity_action = button_entity_map[switch_event.button_name][click_mode]
-            try:
-                logger.info(f"Executing action {entity_action.action} on {entity_action.target_entity.name} after "
-                            f"{click_mode} click on {switch_event.button_name}")
-                entity_action.execute()
-            except Exception as e:
-                logger.error(f"Failed to switch {entity_action}: {e}")
-                traceback.print_exc()
-
-            lockout_timestamp = time.time() + BUTTON_LOCKOUT_PERIOD  # ignore button presses for the next 0.2 seconds to avoid double releases
-
-        # Parse dimmer cycle on long holds
-        if switch_event.action == SWITCH_ACTION_HOLD:
-            if switch_event.duration > SHORT_PRESS_CUTOFF:
-                entity_action = button_entity_map[switch_event.button_name]["long"]
-                if entity_action.action == ACTION_CYCLE_DIMMER:
-                    logger.debug(f"Cycle dimmer {entity_action.target_entity.name}")
-                    entity_action.execute()
+    handle_switch_events(switch_event_queue, button_entity_map)
 
 
 def create_button_entity_map():

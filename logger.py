@@ -1,5 +1,4 @@
 import logging
-import time
 
 from config.config import CONSOLE_LOG_LEVEL
 

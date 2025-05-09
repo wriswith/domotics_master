@@ -1,10 +1,6 @@
 from config.button_names_config import CIRCUIT_ID_BUTTON_MAPPING
-from config.config import ALLOW_NEW_CIRCUIT_IDS
-
-# action can be press, hold, release
-SWITCH_ACTION_PRESS = 'press'
-SWITCH_ACTION_HOLD = 'hold'
-SWITCH_ACTION_RELEASE = 'release'
+from config.config import ALLOW_NEW_CIRCUIT_IDS, SHORT_PRESS_CUTOFF
+from config.constants import CLICK_MODE_LONG, CLICK_MODE_SHORT
 
 
 class SwitchEvent:
@@ -22,3 +18,9 @@ class SwitchEvent:
                 self.button_name = None
             else:
                 raise Exception(f"Unknown circuit id should not have been parsed. ({circuit_id})")
+
+    def get_click_mode(self):
+        if self.duration > SHORT_PRESS_CUTOFF:
+            return CLICK_MODE_LONG
+        else:
+            return CLICK_MODE_SHORT

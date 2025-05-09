@@ -41,14 +41,14 @@ class OneWireMessage:
         """
         Check if circuit_id is valid by:
             - detecting an all zero circuit_id (happens when the bus is no longer powered)
-            - bytes 6 and 7 are not 0, which all id's have.
+            - circuit_id_bytes 6 and 7 are not 0, which all id's have.
             - an unknown circuit_id is detected and the config says this is not allowed.
         :return:
         """
-        bytes = self.circuit_id.split(" ")
+        circuit_id_bytes = self.circuit_id.split(" ")
         if self.circuit_id == "00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000":
             logger.debug(f"All zero circuit_id, bus down? (pin: {self.pin})")
-        if bytes[5] != "00000000" and bytes[6] != "00000000":
+        if circuit_id_bytes[5] != "00000000" and circuit_id_bytes[6] != "00000000":
             logger.debug(f"Bytes 6 and 7 are not 0. ({self.circuit_id})")
             return False
         if self.circuit_id not in CIRCUIT_ID_BUTTON_MAPPING and not ALLOW_NEW_CIRCUIT_IDS:
