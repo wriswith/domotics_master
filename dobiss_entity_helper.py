@@ -2,7 +2,6 @@ from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_SHADES_CONF
     DOBISS_SCENES_CONFIG, DOBISS_MODULES
 from config.constants import DOBISS_RELAY, DOBISS_DIMMER
 from objects.dobiss_dimmer import DobissDimmer
-from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 from objects.dobiss_scene import DobissScene
 from objects.dobiss_shade import DobissShade

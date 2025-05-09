@@ -90,7 +90,6 @@ def generate_alles_uit_scene():
     ])
 
 
-
 generate_alles_uit_scene()
 
 # List of all the modules in the system. Every module has the following attributes
@@ -105,6 +104,7 @@ DOBISS_MODULES = {
   3: {'module_number': 3, 'type': DOBISS_RELAY, 'id': 0x00200302, 'nr_response_messages': 2},
   4: {'module_number': 4, 'type': DOBISS_RELAY, 'id': 0x00200402, 'nr_response_messages': 2},
 }
+
 
 def pivot_config(config):
     result = {}
