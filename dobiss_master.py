@@ -37,8 +37,8 @@ def create_button_entity_map():
     button_entity_map = {}
     for button_name in BUTTON_ENTITY_MAP:
         button_entity_map[button_name] = {}
-        button_entity_map[button_name]['short'] = convert_tuple_to_action_object(BUTTON_ENTITY_MAP[button_name]['short'])
-        button_entity_map[button_name]['long'] = convert_tuple_to_action_object(BUTTON_ENTITY_MAP[button_name]['long'])
+        for key in BUTTON_ENTITY_MAP[button_name]:
+            button_entity_map[button_name][key] = convert_tuple_to_action_object(BUTTON_ENTITY_MAP[button_name][key])
 
     logger.debug(f"Created button entity map")
     return button_entity_map
