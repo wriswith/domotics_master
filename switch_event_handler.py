@@ -121,5 +121,6 @@ def handle_switch_events(switch_event_queue, button_entity_map):
 
         except Exception as e:
             logger.error(f"Failed to switch {switch_event}: {e}")
+            traceback.print_exc()
 
 
