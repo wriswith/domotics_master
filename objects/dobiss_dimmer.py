@@ -12,6 +12,11 @@ class DobissDimmer(DobissOutput):
         self.next_brightness_in_cycle = None
         self.cycle_direction = "down"
 
+    def __repr__(self):
+        return super().__repr__() + (f", min/max brightness {self.min_brightness}/{self.max_brightness}, "
+                                     f"direction {self.cycle_direction} "
+                                     f"(next brightness: {self.next_brightness_in_cycle})")
+
     def get_brightness_ratio(self):
         return (self.max_brightness - self.min_brightness) / 100
 

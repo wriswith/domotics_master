@@ -2,7 +2,7 @@
 import can
 from can import Message
 
-from config.config import CAN_CHANNEL, CAN_INTERFACE
+from config.config import CAN_CHANNEL, CAN_INTERFACE, TEST_RUN
 from config.dobiss_entity_config import DOBISS_MODULES
 from logger import logger
 from objects.dobiss_module import DobissModule
@@ -31,6 +31,8 @@ def get_can_bus():
 
 
 def send_dobiss_command(module_id, msg_data):
+    if TEST_RUN:
+        return None
     bus = get_can_bus()
     msg = create_can_message(module_id, msg_data)
     send_can_message(msg, bus)

@@ -7,6 +7,9 @@ class DobissEntity:
         self.name = name
         self.current_brightness = 100  # for dimmers this represents the brightness and the max value is 100
 
+    def __repr__(self):
+        return f"DobissEntity: {self.dobiss_type}/{self.name}, brightness {self.current_brightness}"
+
     @staticmethod
     def convert_name_to_entity_name(name):
         return name.replace(' ', '_').lower()

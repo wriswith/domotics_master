@@ -10,6 +10,9 @@ class DobissOutput(DobissEntity):
         self.output_number = output_number
         self.current_status = None
 
+    def __repr__(self):
+        return super().__repr__() + f", M{self.module_number}/O{self.output_number}, status {self.current_status}"
+
     def get_output_hex(self):
         return (self.output_number - 1).to_bytes(1, 'big')
 
