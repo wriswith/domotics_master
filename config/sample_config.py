@@ -20,4 +20,9 @@ SHORT_PRESS_CUTOFF = 1.000  # number of seconds before a button press stops bein
 
 CONSOLE_LOG_LEVEL = logging.DEBUG
 
+MQTT_BROKER = "example.com"
+MQTT_PORT = 8883
+MQTT_USERNAME = ""
+MQTT_PASSWORD = ""
+
 TEST_RUN = False  # Disable Can output for testing

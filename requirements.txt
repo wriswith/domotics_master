@@ -1,2 +1,3 @@
-pyserial
-python-can
+pyserial~=3.5
+python-can~=4.5.0
+paho-mqtt~=1.6.1

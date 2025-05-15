@@ -178,3 +178,4 @@ cython_debug/
 .idea/
 
 config/config.py
+testing/

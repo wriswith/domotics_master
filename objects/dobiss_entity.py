@@ -21,6 +21,9 @@ class DobissEntity:
     def get_entity_name(self):
         return DobissEntity.convert_name_to_entity_name(self.name)
 
+    def get_mqtt_name(self):
+        return f"mqtt_{self.get_entity_name()}"
+
     def set_status(self, new_status, brightness=100):
         raise NotImplementedError(f"This method needs to be overridden by child classes. ({self})")
 
