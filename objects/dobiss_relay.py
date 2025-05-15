@@ -1,5 +1,6 @@
 from can_bus_control import send_dobiss_command
 from config.constants import DOBISS_RELAY
+from logger import logger
 from objects.dobiss_output import DobissOutput
 
 
@@ -14,5 +15,8 @@ class DobissRelay(DobissOutput):
             self.set_status(0)
 
     def set_status(self, new_status, brightness=100):
-        self.current_status = new_status
-        send_dobiss_command(self.module_id, self.get_msg_to_set_status())
+        if self.current_brightness == brightness and self.current_status == new_status:
+            logger.debug(f"Ignoring status update for {self.name} because the new status equals the current status")
+        else:
+            self.current_status = new_status
+            send_dobiss_command(self.module_id, self.get_msg_to_set_status())

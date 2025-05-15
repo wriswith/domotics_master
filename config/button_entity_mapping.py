@@ -6,7 +6,7 @@ from config.constants import ACTION_CYCLE_DIMMER, BUTTON_SHORT_INSTA, BUTTON_SHO
 BUTTON_ENTITY_MAP = {
     "zolder_1": {BUTTON_SHORT_INSTA: 'Zolder'},
     "zolder_2": {BUTTON_SHORT_INSTA: 'Technische Ruimte'},
-    "kookplaat_1": {BUTTON_SHORT_RELEASE: 'Keuken Spots', BUTTON_LONG_RELEASE: 'Boost'},
+    "kookplaat_1": {BUTTON_SHORT_RELEASE: 'Keuken Spots', BUTTON_LONG_INSTA: 'Boost'},
     "speelkamer_screen_1": {BUTTON_SHORT_INSTA: 'Shade_Speelkamer_up'},
     "speelkamer_screen_2": {BUTTON_SHORT_INSTA: 'Shade_Speelkamer_down'},
     "speelkamer_deur_1": {},

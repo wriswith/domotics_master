@@ -27,14 +27,17 @@ class DobissDimmer(DobissOutput):
             self.set_status(0, 0)
 
     def set_status(self, new_status, new_brightness=100):
-        if new_brightness > self.max_brightness:
-            new_brightness = self.max_brightness
-        self.current_status = new_status
-        self.current_brightness = new_brightness
-        if new_status == 0:
-            self.next_brightness_in_cycle = None
-        logger.debug(f"Setting status of {self.name} to {new_status} (brightness={new_brightness})")
-        send_dobiss_command(self.module_id, self.get_msg_to_set_status(self.current_brightness))
+        if self.current_brightness == new_brightness and self.current_status == new_status:
+            logger.debug(f"Ignoring status update for {self.name} because the new status equals the current status")
+        else:
+            if new_brightness > self.max_brightness:
+                new_brightness = self.max_brightness
+            self.current_status = new_status
+            self.current_brightness = new_brightness
+            if new_status == 0:
+                self.next_brightness_in_cycle = None
+            logger.debug(f"Setting status of {self.name} to {new_status} (brightness={new_brightness})")
+            send_dobiss_command(self.module_id, self.get_msg_to_set_status(self.current_brightness))
 
     def cycle_brightness(self):
         step = 1 * self.get_brightness_ratio()
