@@ -1,9 +1,7 @@
 import json
 
-from dobiss_entity_helper import get_entities
 from mqtt.mqtt_helper import get_mqtt_client
 from objects.dobiss_dimmer import DobissDimmer
-from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 
 
@@ -44,4 +42,5 @@ def publish_discovery_topics_for_entities(client, entities):
 
 
 if __name__ == '__main__':
+    from dobiss_entity_helper import get_entities
     publish_discovery_topics_for_entities(get_mqtt_client(), get_entities())
