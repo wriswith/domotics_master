@@ -59,7 +59,7 @@ def convert_tuple_to_action_object(map_item: tuple):
     # If only the entity name is given, configure the default action "ACTION_SWITCH"
     elif type(map_item) is str:
         target_entity_name = DobissEntity.convert_name_to_entity_name(map_item)
-        return EntityAction(target_entity=dobiss_entities[map_item], action=ACTION_SWITCH)
+        return EntityAction(target_entity=dobiss_entities[target_entity_name], action=ACTION_SWITCH)
 
     target_entity = dobiss_entities[DobissEntity.convert_name_to_entity_name(map_item[0])]
 
