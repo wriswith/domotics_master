@@ -14,22 +14,23 @@ def publish_discovery_topics_for_entities(client, entities):
                     "name": entity_name,
                     "command_topic": entity.get_mqtt_command_topic(),
                     "state_topic": entity.get_mqtt_state_topic(),
-                    "payload_on": "1",
-                    "payload_off": "0",
-                    "unique_id": entity_name
+                    "payload_on": 1,
+                    "payload_off": 0,
+                    "unique_id": entity_name,
+                    "schema": "json",
                 }
             elif type(entity) is DobissDimmer:
                 discover_payload = {
                     "name": entity_name,
+                    "unique_id": entity_name,
                     "command_topic": entity.get_mqtt_command_topic(),
                     "state_topic": entity.get_mqtt_state_topic(),
-                    "payload_on": "1",
-                    "payload_off": "0",
-                    "unique_id": entity_name,
-                    "brightness_command_topic": entity.get_mqtt_brightness_command_topic(),
-                    "brightness_state_topic": entity.get_mqtt_brightness_state_topic(),
+                    "schema": "json",
                     "on_command_type": "brightness",
-                    "brightness_scale": entity.max_brightness
+                    "brightness": True,
+                    "brightness_scale": entity.max_brightness,
+                    "payload_on": 1,
+                    "payload_off": 0
                 }
             else:
                 raise Exception(f"Unknown entity type: {type(entity)}")

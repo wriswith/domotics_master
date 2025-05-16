@@ -1,3 +1,4 @@
+import json
 import time
 from queue import Queue
 from threading import Thread
@@ -29,7 +30,6 @@ class MqttWorker:
         client.on_message = on_message_callback
         client.tls_set()
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
-        client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
         logger.debug("Initialed MQTT client")
         return client
 
@@ -58,13 +58,26 @@ class MqttWorker:
     @staticmethod
     def process_received_message(client, userdata, msg):
         from dobiss_entity_helper import get_entities
+        logger.debug(f"Received topic {msg.topic}, payload: {msg.payload.decode()}")
+
         entities = get_entities()
+
         topic = msg.topic
-        status = msg.payload.decode()
-        entity_name = topic.replace('homeassistant/light/', '').replace('/set', '')
-        logger.debug(f"Received topic {topic}, payload: {status}, entity_name: {entity_name}")
-        print(entities.keys())
-        if entity_name in entities.keys():
-            entities[entity_name].set_status(int(status))
-        else:
+        entity_name = topic[20:-4]
+
+        payload = json.loads(msg.payload.decode())
+        status = payload.get("status")
+        brightness = payload.get("brightness")
+
+        if entity_name not in entities.keys():
             logger.error(f"Failed to process mqtt topic: {topic}")
+
+        # Handle binary on of switch
+        elif brightness is None:
+            logger.debug(f"Setting {entity_name} to {status}")
+            entities[entity_name].set_status(int(payload))
+
+        # Handle JSON response
+        else:
+            logger.debug(f"Setting {entity_name} to {status} and {brightness}.")
+            entities[entity_name].set_status(int(payload), int(brightness))
