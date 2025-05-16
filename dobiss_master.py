@@ -16,9 +16,11 @@ from switch_event_handler import handle_switch_events
 
 def dobiss_master():
     # Create the mapping between the buttons and the possible actions
+    logger.debug("Creating button entity mapping.")
     button_entity_map = create_button_entity_map()
 
     # Read the current status of the entities from the modules using CAN bus
+    logger.debug("Reading the status of the outputs of the modules")
     modules_statuses = get_modules_statuses()
     for module_number in modules_statuses:
         parse_module_status_response(modules_statuses[module_number], module_number)
@@ -29,6 +31,7 @@ def dobiss_master():
     switch_event_queue = Queue()
     one_wire_reader(ACTIVE_PICO_PINS, switch_event_queue)
 
+
     MqttWorker.get_mqtt_worker().publish_discovery_topics(get_entities())
 
     # Execute the actions related to the button events
@@ -36,6 +39,7 @@ def dobiss_master():
 
 
 def report_initial_state():
+    logger.debug("Reporting the initial state of the outputs to MQTT.")
     entities = get_entities()
     for entity in entities:
         if isinstance(entity, DobissOutput):

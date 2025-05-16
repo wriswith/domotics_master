@@ -146,6 +146,7 @@ def message_handler(message_queue: list, switch_event_queue: Queue):
 
 
 def one_wire_reader(active_pins: list, switch_event_queue: Queue):
+    logger.debug(f"Starting receiver thread for msgs from microcontroller.")
     # Start reading messages from the pi pico
     message_queues = {}
     message_handler_threads = {}
