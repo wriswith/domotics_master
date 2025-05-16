@@ -13,6 +13,7 @@ _mqtt_worker = None
 
 class MqttWorker:
     def __init__(self):
+        logger.debug("Creating MqttWorker")
         self.publish_queue = Queue()
         self.client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         self.receive_thread = Thread(target=MqttWorker.receive, args=(self,))
@@ -28,6 +29,7 @@ class MqttWorker:
         client.tls_set()
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
         client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
+        logger.debug("Initialed MQTT client")
         return client
 
     @staticmethod
@@ -43,9 +45,11 @@ class MqttWorker:
     def work(self):
         while True:
             (topic, message) = self.publish_queue.get()
+            logger.debug(f"Publish state change to MQTT ({topic}, {message}).")
             self.client.publish(topic, message)
 
     def receive(self):
+        logger.debug("MQTT receive thread started")
         self.client.loop_forever()
 
     @staticmethod

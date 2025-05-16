@@ -2,7 +2,7 @@ from queue import Queue
 
 from can_bus_control import get_modules_statuses
 from config.button_entity_mapping import BUTTON_ENTITY_MAP
-from config.config import ACTIVE_PICO_PINS
+from config.config import ACTIVE_PICO_PINS, TEST_RUN
 from config.constants import ACTION_SWITCH
 from dobiss_entity_helper import get_entities, parse_module_status_response
 from logger import logger
@@ -11,7 +11,6 @@ from objects.dobiss_entity import DobissEntity
 from objects.entity_action import EntityAction
 from one_wire_reader import one_wire_reader
 from switch_event_handler import handle_switch_events
-
 
 
 def dobiss_master():
