@@ -14,7 +14,8 @@ _mqtt_worker = None
 class MqttWorker:
     def __init__(self):
         self.publish_queue = Queue()
-        self.client = self.initialize_mqtt_client(self.process_received_message)
+        self.client = self.initialize_mqtt_client(MqttWorker.process_received_message)
+        self.receive_thread = Thread(target=MqttWorker.receive, args=(self,))
         self.worker_thread = Thread(target=MqttWorker.work, args=(self,))
         self.worker_thread.start()
 
@@ -42,6 +43,9 @@ class MqttWorker:
         while True:
             (topic, message) = self.publish_queue.get()
             self.client.publish(topic, message)
+
+    def receive(self):
+        self.client.loop_forever()
 
     @staticmethod
     def process_received_message(client, userdata, msg):
