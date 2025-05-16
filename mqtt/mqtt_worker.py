@@ -42,7 +42,7 @@ class MqttWorker:
 
     def publish_discovery_topics(self, entities):
         publish_discovery_topics_for_entities(self.client, entities)
-        time.sleep(0.1)
+        time.sleep(0.5)
         self.client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
 
     def work(self):
