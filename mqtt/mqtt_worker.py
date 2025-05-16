@@ -66,7 +66,13 @@ class MqttWorker:
         entity_name = topic[20:-4]
 
         payload = json.loads(msg.payload.decode())
-        status = payload.get("status")
+        status = payload.get("state")
+        if status == "ON":
+            status = 1
+        elif status == "OFF":
+            status = 0
+        else:
+            raise Exception(f"Unknown status: {status}")
         brightness = payload.get("brightness")
 
         if entity_name not in entities.keys():
