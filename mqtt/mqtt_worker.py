@@ -17,7 +17,7 @@ class MqttWorker:
     def __init__(self):
         logger.debug("Creating MqttWorker")
         self.publish_queue = Queue()
-        self.client = self.initialize_mqtt_client(MqttWorker.process_received_message)
+        self._client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         self.receive_thread = Thread(target=MqttWorker.receive, args=(self,))
         self.receive_thread.start()
         self.worker_thread = Thread(target=MqttWorker.work, args=(self,))
@@ -41,19 +41,21 @@ class MqttWorker:
         return _mqtt_worker
 
     def publish_discovery_topics(self, entities):
-        publish_discovery_topics_for_entities(self.client, entities)
+        publish_discovery_topics_for_entities(self._client, entities)
         time.sleep(0.5)
-        self.client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
+        self._client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
 
     def work(self):
         while True:
             (topic, message) = self.publish_queue.get()
             logger.debug(f"Publish state change to MQTT ({topic}, {message}).")
-            self.client.publish(topic, message)
+            self._client.publish(topic, message)
 
     def receive(self):
+        # Use separate client as the MQTT client is not thread safe.
+        client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         logger.debug("MQTT receive thread started")
-        self.client.loop_forever()
+        client.loop_forever()
 
     @staticmethod
     def process_received_message(client, userdata, msg):
