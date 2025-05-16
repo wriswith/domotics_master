@@ -25,7 +25,7 @@ def publish_discovery_topics_for_entities(client, entities):
                 discover_payload = {
                     "name": mqtt_name,
                     "command_topic": f"homeassistant/light/{mqtt_name}/set",
-                    "state_topic": f"homeassistant/light/{mqtt_name}/state",
+                    "state_topic": entity.get_mqtt_state_topic(),
                     "payload_on": "1",
                     "payload_off": "0",
                     "unique_id": mqtt_name,
@@ -38,7 +38,7 @@ def publish_discovery_topics_for_entities(client, entities):
                 raise Exception(f"Unknown entity type: {type(entity)}")
             discover_topic = f"homeassistant/light/{mqtt_name}/config"
             client.publish(discover_topic, json.dumps(discover_payload), retain=True)
-            topic = f"homeassistant/light/{mqtt_name}/state"
+            topic = entity.get_mqtt_state_topic()
             payload = entity.current_status
             client.publish(topic, payload, retain=True)
 
