@@ -8,6 +8,7 @@ from dobiss_entity_helper import get_entities, parse_module_status_response
 from logger import logger
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
+from objects.dobiss_output import DobissOutput
 from objects.entity_action import EntityAction
 from one_wire_reader import one_wire_reader
 from switch_event_handler import handle_switch_events
@@ -22,6 +23,8 @@ def dobiss_master():
     for module_number in modules_statuses:
         parse_module_status_response(modules_statuses[module_number], module_number)
 
+    report_initial_state()
+
     # Start reading button events from the pico pi
     switch_event_queue = Queue()
     one_wire_reader(ACTIVE_PICO_PINS, switch_event_queue)
@@ -30,6 +33,13 @@ def dobiss_master():
 
     # Execute the actions related to the button events
     handle_switch_events(switch_event_queue, button_entity_map)
+
+
+def report_initial_state():
+    entities = get_entities()
+    for entity in entities:
+        if isinstance(entity, DobissOutput):
+            entity.report_state_to_mqtt()
 
 
 def create_button_entity_map():

@@ -15,10 +15,13 @@ class DobissRelay(DobissOutput):
         else:
             self.set_status(0)
 
+    def report_state_to_mqtt(self):
+        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status()))
+
     def set_status(self, new_status, brightness=100):
         if self.current_brightness == brightness and self.current_status == new_status:
             logger.debug(f"Ignoring status update for {self.name} because the new status equals the current status")
         else:
             self.current_status = new_status
             send_dobiss_command(self.module_id, self.get_msg_to_set_status())
-            MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status()))
+            self.report_state_to_mqtt()
