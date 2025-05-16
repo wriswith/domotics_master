@@ -81,9 +81,9 @@ class MqttWorker:
         # Handle binary on of switch
         elif brightness is None:
             logger.debug(f"Setting {entity_name} to {status}")
-            entities[entity_name].set_status(int(payload))
+            entities[entity_name].set_status(status)
 
         # Handle JSON response
         else:
             logger.debug(f"Setting {entity_name} to {status} and {brightness}.")
-            entities[entity_name].set_status(int(payload), int(brightness))
+            entities[entity_name].set_status(status, brightness)
