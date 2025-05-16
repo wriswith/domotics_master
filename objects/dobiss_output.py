@@ -1,3 +1,5 @@
+import json
+
 from config.dobiss_entity_config import DOBISS_MODULES
 from objects.dobiss_entity import DobissEntity
 
@@ -12,6 +14,13 @@ class DobissOutput(DobissEntity):
 
     def __repr__(self):
         return super().__repr__() + f", M{self.module_number}/O{self.output_number}, status {self.current_status}"
+
+    def get_mqtt_status(self):
+        if self.current_status == 1:
+            result = {"state": "ON"}
+        else:
+            result = {"state": "OFF"}
+        return json.dumps(result)
 
     def get_output_hex(self):
         return (self.output_number - 1).to_bytes(1, 'big')

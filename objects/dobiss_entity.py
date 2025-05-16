@@ -18,6 +18,16 @@ class DobissEntity:
     def convert_int_to_hex(input_value: int):
         return input_value.to_bytes(1, 'big')
 
+    @staticmethod
+    def convert_status_from_mqtt(mqtt_status: str):
+        if mqtt_status == "ON":
+            status = 1
+        elif mqtt_status == "OFF":
+            status = 0
+        else:
+            raise Exception(f"Unknown mqtt_status: {mqtt_status}")
+        return status
+
     def get_entity_name(self):
         return DobissEntity.convert_name_to_entity_name(self.name)
 

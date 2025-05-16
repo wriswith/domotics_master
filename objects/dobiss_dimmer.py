@@ -1,6 +1,9 @@
+import json
+
 from can_bus_control import send_dobiss_command
 from config.constants import DOBISS_DIMMER
 from logger import logger
+from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_output import DobissOutput
 
 
@@ -26,6 +29,14 @@ class DobissDimmer(DobissOutput):
         else:
             self.set_status(0, 0)
 
+    def get_mqtt_status(self):
+        if self.current_status == 1:
+            result = {"state": "ON"}
+        else:
+            result = {"state": "OFF"}
+        result["brightness"] = self.current_brightness
+        return json.dumps(result)
+
     def set_status(self, new_status, new_brightness=100):
         if self.current_brightness == new_brightness and self.current_status == new_status:
             logger.debug(f"Ignoring status update for {self.name} because the new status equals the current status")
@@ -38,6 +49,7 @@ class DobissDimmer(DobissOutput):
                 self.next_brightness_in_cycle = None
             logger.debug(f"Setting status of {self.name} to {new_status} (brightness={new_brightness})")
             send_dobiss_command(self.module_id, self.get_msg_to_set_status(self.current_brightness))
+            MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status()))
 
     def cycle_brightness(self):
         step = 1 * self.get_brightness_ratio()
