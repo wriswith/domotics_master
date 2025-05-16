@@ -58,7 +58,7 @@ class MqttWorker:
         entities = get_entities()
         topic = msg.topic
         status = msg.payload.decode()
-        entity_name = topic.replace('homeassistant/light/mqtt_', '').replace('/set', '')
+        entity_name = topic.replace('homeassistant/light/', '').replace('/set', '')
         logger.debug(f"Received topic {topic}, payload: {status}, entity_name: {entity_name}")
         print(entities.keys())
         if entity_name in entities.keys():
