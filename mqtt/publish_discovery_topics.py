@@ -7,8 +7,7 @@ from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 
 
-def publish_discovery_topics_for_entities(entities):
-    client = get_mqtt_client()
+def publish_discovery_topics_for_entities(client, entities):
     for entity_name in entities:
         entity = entities[entity_name]
         mqtt_name = entity.get_mqtt_name()
@@ -45,4 +44,4 @@ def publish_discovery_topics_for_entities(entities):
 
 
 if __name__ == '__main__':
-    publish_discovery_topics_for_entities(get_entities())
+    publish_discovery_topics_for_entities(get_mqtt_client(), get_entities())

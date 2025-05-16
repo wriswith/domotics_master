@@ -6,9 +6,11 @@ from config.config import ACTIVE_PICO_PINS
 from config.constants import ACTION_SWITCH
 from dobiss_entity_helper import get_entities, parse_module_status_response
 from logger import logger
+from mqtt.mqtt_worker import MqttWorker
 from objects.entity_action import EntityAction
 from one_wire_reader import one_wire_reader
 from switch_event_handler import handle_switch_events
+
 
 
 def dobiss_master():
@@ -23,6 +25,8 @@ def dobiss_master():
     # Start reading button events from the pico pi
     switch_event_queue = Queue()
     one_wire_reader(ACTIVE_PICO_PINS, switch_event_queue)
+
+    MqttWorker.get_mqtt_worker().publish_discovery_topics()
 
     # Execute the actions related to the button events
     handle_switch_events(switch_event_queue, button_entity_map)
