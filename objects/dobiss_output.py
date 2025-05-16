@@ -10,7 +10,7 @@ class DobissOutput(DobissEntity):
         self.module_number = module_number
         self.module_id = DOBISS_MODULES[module_number]['id']
         self.output_number = output_number
-        self.current_status = None
+        self.current_status = 0
 
     def __repr__(self):
         return super().__repr__() + f", M{self.module_number}/O{self.output_number}, status {self.current_status}"
