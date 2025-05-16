@@ -56,7 +56,8 @@ class MqttWorker:
         status = msg.payload.decode()
         entity_name = topic.replace('homeassistant/light/mqtt_', '').replace('/set', '')
         logger.debug(f"Received topic {topic}, payload: {status}, entity_name: {entity_name}")
-        if entity_name in entities:
+        print(entities.keys())
+        if entity_name in entities.keys():
             entities[entity_name].set_status(status)
         else:
             logger.error(f"Failed to process mqtt topic: {topic}")
