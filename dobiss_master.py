@@ -7,6 +7,7 @@ from config.constants import ACTION_SWITCH
 from dobiss_entity_helper import get_entities, parse_module_status_response
 from logger import logger
 from mqtt.mqtt_worker import MqttWorker
+from objects.dobiss_entity import DobissEntity
 from objects.entity_action import EntityAction
 from one_wire_reader import one_wire_reader
 from switch_event_handler import handle_switch_events
@@ -57,17 +58,21 @@ def convert_tuple_to_action_object(map_item: tuple):
 
     # If only the entity name is given, configure the default action "ACTION_SWITCH"
     elif type(map_item) is str:
+        target_entity_name = DobissEntity.convert_name_to_entity_name(map_item)
         return EntityAction(target_entity=dobiss_entities[map_item], action=ACTION_SWITCH)
-    elif len(map_item) == 1:
-        return EntityAction(target_entity=dobiss_entities[map_item[0]], action=ACTION_SWITCH)
+
+    target_entity = dobiss_entities[DobissEntity.convert_name_to_entity_name(map_item[0])]
+
+    if len(map_item) == 1:
+        return EntityAction(target_entity=target_entity, action=ACTION_SWITCH)
 
     # If an action_type is configured, pass it to the action object
     elif len(map_item) == 2:
-        return EntityAction(target_entity=dobiss_entities[map_item[0]], action=map_item[1])
+        return EntityAction(target_entity=target_entity, action=map_item[1])
 
     # If an action_type and parameters are configured, pass them to the action object
     elif len(map_item) == 2:
-        return EntityAction(target_entity=dobiss_entities[map_item[0]], action=map_item[1], named_arguments=map_item[2])
+        return EntityAction(target_entity=target_entity, action=map_item[1], named_arguments=map_item[2])
 
     else:
         raise NotImplementedError(f"Map item with {len(map_item)} elements is not supported. ({map_item})")
