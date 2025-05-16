@@ -1,11 +1,11 @@
 import json
 
 from mqtt.mqtt_helper import get_mqtt_client
-from objects.dobiss_dimmer import DobissDimmer
-from objects.dobiss_relay import DobissRelay
 
 
 def publish_discovery_topics_for_entities(client, entities):
+    from objects.dobiss_dimmer import DobissDimmer
+    from objects.dobiss_relay import DobissRelay
     for entity_name in entities:
         entity = entities[entity_name]
         mqtt_name = entity.get_mqtt_name()
