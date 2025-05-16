@@ -2,6 +2,7 @@ from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_SHADES_CONF
     DOBISS_SCENES_CONFIG, DOBISS_MODULES
 from config.constants import DOBISS_RELAY, DOBISS_DIMMER
 from objects.dobiss_dimmer import DobissDimmer
+from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 from objects.dobiss_scene import DobissScene
 from objects.dobiss_shade import DobissShade
@@ -25,8 +26,9 @@ def get_entities(include_shade_relays=False):
 def generate_entities_from_config():
     entities = {}
     shade_relay_entities = []
-    for entity_name in DOBISS_LIGHTS_CONFIG:
-        entity_config = DOBISS_LIGHTS_CONFIG[entity_name]
+    for friendly_entity_name in DOBISS_LIGHTS_CONFIG:
+        entity_name = DobissEntity.convert_name_to_entity_name(friendly_entity_name)
+        entity_config = DOBISS_LIGHTS_CONFIG[friendly_entity_name]
         if entity_config['dobiss_type'] == DOBISS_DIMMER:
             # read optional min/max brightness parameters
             if "min_brightness" in entity_config:
@@ -45,8 +47,9 @@ def generate_entities_from_config():
         else:
             NotImplementedError()
 
-    for shade_name in DOBISS_SHADES_CONFIG:
-        shade_config = DOBISS_SHADES_CONFIG[shade_name]
+    for friendly_shade_name in DOBISS_SHADES_CONFIG:
+        shade_name = DobissEntity.convert_name_to_entity_name(friendly_shade_name)
+        shade_config = DOBISS_SHADES_CONFIG[friendly_shade_name]
         shade_up_entity = DobissRelay(f"{shade_name}_up", shade_config["output_up"]['module'],
                                       shade_config["output_up"]['output'])
         shade_down_entity = DobissRelay(f"{shade_name}_down", shade_config["output_down"]['module'],
@@ -54,13 +57,15 @@ def generate_entities_from_config():
         entities[shade_name] = DobissShade(shade_name, shade_up_entity, shade_down_entity)
         shade_relay_entities.extend((shade_up_entity, shade_down_entity))
 
-    for scene_name in DOBISS_SCENES_CONFIG:
+    for friendly_scene_name in DOBISS_SCENES_CONFIG:
         action_list = []
-        for entity_tuple in DOBISS_SCENES_CONFIG[scene_name]:
+        scene_name = DobissEntity.convert_name_to_entity_name(friendly_scene_name)
+        for entity_tuple in DOBISS_SCENES_CONFIG[friendly_scene_name]:
+            target_entity_name = DobissEntity.convert_name_to_entity_name(entity_tuple[0])
             if len(entity_tuple) == 2:
-                action_list.append(EntityAction(entities[entity_tuple[0]], entity_tuple[1]))
+                action_list.append(EntityAction(entities[target_entity_name], entity_tuple[1]))
             else:
-                action_list.append(EntityAction(entities[entity_tuple[0]], entity_tuple[1], entity_tuple[2]))
+                action_list.append(EntityAction(entities[target_entity_name], entity_tuple[1], entity_tuple[2]))
         entities[scene_name] = DobissScene(scene_name, action_list)
 
     entities_including_shade_relays = entities.copy()
