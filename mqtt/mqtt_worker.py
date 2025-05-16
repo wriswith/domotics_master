@@ -16,6 +16,7 @@ class MqttWorker:
         self.publish_queue = Queue()
         self.client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         self.receive_thread = Thread(target=MqttWorker.receive, args=(self,))
+        self.receive_thread.start()
         self.worker_thread = Thread(target=MqttWorker.work, args=(self,))
         self.worker_thread.start()
 
@@ -53,8 +54,8 @@ class MqttWorker:
         entities = get_entities()
         topic = msg.topic
         status = msg.payload.decode()
-        logger.debug(f"Received topic {topic}, payload: {status}")
-        entity_name = topic.replace('homeassistant/light/_mqtt_', '').replace('/set', '')
+        entity_name = topic.replace('homeassistant/light/mqtt_', '').replace('/set', '')
+        logger.debug(f"Received topic {topic}, payload: {status}, entity_name: {entity_name}")
         if entity_name in entities:
             entities[entity_name].set_status(status)
         else:
