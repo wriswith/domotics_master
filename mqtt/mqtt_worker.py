@@ -58,6 +58,7 @@ class MqttWorker:
     @staticmethod
     def process_received_message(client, userdata, msg):
         from dobiss_entity_helper import get_entities
+        from objects.dobiss_entity import DobissEntity
         logger.debug(f"Received topic {msg.topic}, payload: {msg.payload.decode()}")
 
         entities = get_entities()
@@ -66,7 +67,7 @@ class MqttWorker:
         entity_name = topic[20:-4]
 
         payload = json.loads(msg.payload.decode())
-        status = payload.get("state")
+        status = DobissEntity.convert_status_from_mqtt(payload.get("state"))
         brightness = payload.get("brightness")
 
         if entity_name not in entities.keys():
