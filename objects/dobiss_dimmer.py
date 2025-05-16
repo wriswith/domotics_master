@@ -38,7 +38,7 @@ class DobissDimmer(DobissOutput):
         return json.dumps(result)
 
     def report_state_to_mqtt(self):
-        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status()))
+        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status(), True))
 
     def set_status(self, new_status, new_brightness=100):
         if self.current_brightness == new_brightness and self.current_status == new_status:

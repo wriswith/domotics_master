@@ -17,11 +17,10 @@ class MqttWorker:
     def __init__(self):
         logger.debug("Creating MqttWorker")
         self.publish_queue = Queue()
-        self._client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         self.receive_thread = Thread(target=MqttWorker.receive, args=(self,))
         self.receive_thread.start()
-        self.worker_thread = Thread(target=MqttWorker.work, args=(self,))
-        self.worker_thread.start()
+        self.publish_thread = Thread(target=MqttWorker.publish, args=(self,))
+        self.publish_thread.start()
 
     @staticmethod
     def initialize_mqtt_client(on_message_callback):
@@ -41,14 +40,15 @@ class MqttWorker:
         return _mqtt_worker
 
     def publish_discovery_topics(self, entities):
-        publish_discovery_topics_for_entities(self._client, entities)
+        publish_discovery_topics_for_entities(self.publish_queue, entities)
         time.sleep(0.5)
 
-    def work(self):
+    def publish(self):
+        client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         while True:
-            (topic, message) = self.publish_queue.get()
+            (topic, message, retain) = self.publish_queue.get()
             logger.debug(f"Publish state change to MQTT ({topic}, {message}).")
-            self._client.publish(topic, message)
+            client.publish(topic, message, retain=retain)
 
     def receive(self):
         # Use separate client as the MQTT client is not thread safe.

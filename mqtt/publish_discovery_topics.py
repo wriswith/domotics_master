@@ -1,9 +1,10 @@
 import json
+from queue import Queue
 
 from mqtt.mqtt_helper import get_mqtt_client
 
 
-def publish_discovery_topics_for_entities(client, entities):
+def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
     from objects.dobiss_dimmer import DobissDimmer
     from objects.dobiss_relay import DobissRelay
     from objects.dobiss_output import DobissOutput
@@ -36,7 +37,7 @@ def publish_discovery_topics_for_entities(client, entities):
             else:
                 raise Exception(f"Unknown entity type: {type(entity)}")
             discover_topic = f"homeassistant/light/{entity_name}/config"
-            client.publish(discover_topic, json.dumps(discover_payload), retain=True)
+            publish_queue.put((discover_topic, json.dumps(discover_payload), True))
             entity.report_state_to_mqtt()
 
 
