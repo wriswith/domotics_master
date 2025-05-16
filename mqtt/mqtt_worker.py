@@ -43,7 +43,6 @@ class MqttWorker:
     def publish_discovery_topics(self, entities):
         publish_discovery_topics_for_entities(self._client, entities)
         time.sleep(0.5)
-        self._client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
 
     def work(self):
         while True:
@@ -54,6 +53,7 @@ class MqttWorker:
     def receive(self):
         # Use separate client as the MQTT client is not thread safe.
         client = self.initialize_mqtt_client(MqttWorker.process_received_message)
+        client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
         logger.debug("MQTT receive thread started")
         client.loop_forever()
 
