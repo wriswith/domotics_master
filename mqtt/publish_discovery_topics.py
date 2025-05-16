@@ -13,8 +13,8 @@ def publish_discovery_topics_for_entities(client, entities):
             if type(entity) is DobissRelay:
                 discover_payload = {
                     "name": mqtt_name,
-                    "command_topic": f"homeassistant/light/{mqtt_name}/set",
-                    "state_topic": f"homeassistant/light/{mqtt_name}/state",
+                    "command_topic": entity.get_mqtt_command_topic(),
+                    "state_topic": entity.get_mqtt_state_topic(),
                     "payload_on": "1",
                     "payload_off": "0",
                     "unique_id": mqtt_name
@@ -22,13 +22,13 @@ def publish_discovery_topics_for_entities(client, entities):
             elif type(entity) is DobissDimmer:
                 discover_payload = {
                     "name": mqtt_name,
-                    "command_topic": f"homeassistant/light/{mqtt_name}/set",
+                    "command_topic": entity.get_mqtt_command_topic(),
                     "state_topic": entity.get_mqtt_state_topic(),
                     "payload_on": "1",
                     "payload_off": "0",
                     "unique_id": mqtt_name,
-                    "brightness_command_topic": f"home/light/{mqtt_name}/brightness/set",
-                    "brightness_state_topic": f"home/light/{mqtt_name}/brightness/state",
+                    "brightness_command_topic": entity.get_mqtt_brightness_command_topic(),
+                    "brightness_state_topic": entity.get_mqtt_brightness_state_topic(),
                     "on_command_type": "brightness",
                     "brightness_scale": entity.max_brightness
                 }

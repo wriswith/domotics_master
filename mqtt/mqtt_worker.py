@@ -4,6 +4,7 @@ from threading import Thread
 import paho.mqtt.client as mqtt
 
 from config.config import MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER, MQTT_PORT
+from logger import logger
 from mqtt.publish_discovery_topics import publish_discovery_topics_for_entities
 
 
@@ -13,18 +14,18 @@ _mqtt_worker = None
 class MqttWorker:
     def __init__(self):
         self.publish_queue = Queue()
-        self.client = self.initialize_mqtt_client()
+        self.client = self.initialize_mqtt_client(self.process_received_message)
         self.worker_thread = Thread(target=MqttWorker.work, args=(self,))
         self.worker_thread.start()
 
     @staticmethod
-    def initialize_mqtt_client():
+    def initialize_mqtt_client(on_message_callback):
         client = mqtt.Client()
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-        # self.client.on_message = on_message  # Function that handles msgs from subscribed MQTT topics
+        client.on_message = on_message_callback
         client.tls_set()
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
-        # self.client.subscribe(TOPIC_SUB)
+        client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
         return client
 
     @staticmethod
@@ -41,3 +42,15 @@ class MqttWorker:
         while True:
             (topic, message) = self.publish_queue.get()
             self.client.publish(topic, message)
+
+    @staticmethod
+    def process_received_message(client, userdata, msg):
+        from dobiss_entity_helper import get_entities
+        entities = get_entities()
+        topic = msg.topic
+        status = msg.payload.decode()
+        entity_name = topic.replace('homeassistant/light/_mqtt_', '').replace('/set', '')
+        if entity_name in entities:
+            entities[entity_name].set_status(status)
+        else:
+            logger.error(f"Failed to process mqtt topic: {topic}")

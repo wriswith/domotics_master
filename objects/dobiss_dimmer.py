@@ -20,6 +20,12 @@ class DobissDimmer(DobissOutput):
     def get_brightness_ratio(self):
         return (self.max_brightness - self.min_brightness) / 100
 
+    def get_mqtt_brightness_state_topic(self):
+        return f"homeassistant/light/{self.get_mqtt_name()}/brightness/state"
+
+    def get_mqtt_brightness_command_topic(self):
+        return f"homeassistant/light/{self.get_mqtt_name()}/brightness/set"
+
     def switch_status(self):
         if self.current_status == 0:
             self.set_status(1, self.max_brightness)

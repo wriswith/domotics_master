@@ -22,4 +22,3 @@ class DobissRelay(DobissOutput):
             self.current_status = new_status
             send_dobiss_command(self.module_id, self.get_msg_to_set_status())
             MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), new_status))
-
