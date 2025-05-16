@@ -4,7 +4,6 @@ from threading import Thread
 import paho.mqtt.client as mqtt
 
 from config.config import MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER, MQTT_PORT
-from dobiss_entity_helper import get_entities
 from mqtt.publish_discovery_topics import publish_discovery_topics_for_entities
 
 
@@ -35,8 +34,7 @@ class MqttWorker:
             _mqtt_worker = MqttWorker()
         return _mqtt_worker
 
-    def publish_discovery_topics(self):
-        entities = get_entities()
+    def publish_discovery_topics(self, entities):
         publish_discovery_topics_for_entities(self.client, entities)
 
     def work(self):

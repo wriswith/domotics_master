@@ -26,7 +26,7 @@ def dobiss_master():
     switch_event_queue = Queue()
     one_wire_reader(ACTIVE_PICO_PINS, switch_event_queue)
 
-    MqttWorker.get_mqtt_worker().publish_discovery_topics()
+    MqttWorker.get_mqtt_worker().publish_discovery_topics(get_entities())
 
     # Execute the actions related to the button events
     handle_switch_events(switch_event_queue, button_entity_map)
