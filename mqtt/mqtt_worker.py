@@ -62,6 +62,6 @@ class MqttWorker:
         logger.debug(f"Received topic {topic}, payload: {status}, entity_name: {entity_name}")
         print(entities.keys())
         if entity_name in entities.keys():
-            entities[entity_name].set_status(status)
+            entities[entity_name].set_status(int(status))
         else:
             logger.error(f"Failed to process mqtt topic: {topic}")
