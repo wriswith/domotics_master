@@ -45,6 +45,7 @@ class MqttWorker:
 
     def publish(self):
         client = self.initialize_mqtt_client(MqttWorker.process_received_message)
+        client.loop_start()
         while True:
             (topic, message, retain) = self.publish_queue.get()
             logger.debug(f"Publish state change to MQTT ({topic}, {message}).")
