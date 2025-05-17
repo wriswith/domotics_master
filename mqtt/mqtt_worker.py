@@ -1,5 +1,6 @@
 import json
 import time
+import traceback
 from queue import Queue
 from threading import Thread
 
@@ -47,16 +48,36 @@ class MqttWorker:
         client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         client.loop_start()
         while True:
-            (topic, message, retain) = self.publish_queue.get()
-            logger.debug(f"Publish state change to MQTT ({topic}, {message}).")
-            client.publish(topic, message, retain=retain)
+            message = ''
+            topic = ''
+            try:
+                (topic, message, retain) = self.publish_queue.get()
+                logger.debug(f"Publish state change to MQTT ({topic}, {message}).")
+                client.publish(topic, message, retain=retain)
+            except Exception as e:
+                logger.error(f"Failed to publish {message} to {topic}. ({e})")
+                # Upon exception create a new connection.
+                traceback.print_exc()
+                client.loop_stop()
+                client.disconnect()
+                client = self.initialize_mqtt_client(MqttWorker.process_received_message)
+                client.loop_start()
 
     def receive(self):
         # Use separate client as the MQTT client is not thread safe.
         client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
         logger.debug("MQTT receive thread started")
-        client.loop_forever()
+        while True:
+            try:
+                client.loop_forever()
+            except Exception as e:
+                logger.error(f"MQTT receive client failed with error: {e}")
+                # Upon exception create a new connection.
+                traceback.print_exc()
+                client.disconnect()
+                client = self.initialize_mqtt_client(MqttWorker.process_received_message)
+                client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
 
     @staticmethod
     def process_received_message(client, userdata, msg):
