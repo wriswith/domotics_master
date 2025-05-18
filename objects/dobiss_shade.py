@@ -23,6 +23,15 @@ class DobissShade(DobissEntity):
             self.relays_up.current_status = 1
             return self.relays_up.get_msg_to_set_status()
 
+    def get_mqtt_state_topic(self):
+        return f"homeassistant/cover/{self.name}/state"
+
+    def get_mqtt_command_topic(self):
+        return f"homeassistant/cover/{self.name}/set"
+
+    def get_discover_topic(self):
+        return f"homeassistant/cover/{self.name}/config"
+
     def switch_status(self):
         if self.status == SHADE_STATUS_DOWN:
             self.set_status(SHADE_STATUS_UP)

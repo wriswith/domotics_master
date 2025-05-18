@@ -1,6 +1,8 @@
 import json
 from queue import Queue
 
+from config.constants import SHADE_COMMAND_OPEN, SHADE_COMMAND_STOP, SHADE_COMMAND_CLOSE, SHADE_STATE_OPEN, \
+    SHADE_STATE_CLOSED, SHADE_STATE_CLOSING, SHADE_STATE_OPENING, SHADE_STATE_STOPED
 from mqtt.mqtt_helper import get_mqtt_client
 
 
@@ -8,10 +10,12 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
     from objects.dobiss_dimmer import DobissDimmer
     from objects.dobiss_relay import DobissRelay
     from objects.dobiss_output import DobissOutput
+    from objects.dobiss_shade import DobissShade
     for entity_name in entities:
         entity = entities[entity_name]
-        if isinstance(entity, DobissOutput):
+        if isinstance(entity, DobissOutput) or type(entity) is DobissShade:
             if type(entity) is DobissRelay:
+                domain = "light"
                 discover_payload = {
                     "name": entity_name,
                     "command_topic": entity.get_mqtt_command_topic(),
@@ -22,6 +26,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                     "schema": "json",
                 }
             elif type(entity) is DobissDimmer:
+                domain = "light"
                 discover_payload = {
                     "name": entity_name,
                     "unique_id": entity_name,
@@ -34,9 +39,28 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                     "payload_on": 1,
                     "payload_off": 0
                 }
+            elif type(entity) is DobissShade:
+                domain = "cover"
+                discover_payload = {
+                  "name": entity_name,
+                  "unique_id": entity_name,
+                  "command_topic": entity.get_mqtt_command_topic(),
+                  "state_topic": entity.get_mqtt_state_topic(),
+                  # "position_topic": "home/livingroom/shade/position",
+                  # "set_position_topic": "home/livingroom/shade/set_position",
+                  "payload_open": SHADE_COMMAND_OPEN,
+                  "payload_close": SHADE_COMMAND_CLOSE,
+                  "payload_stop": SHADE_COMMAND_STOP,
+                  "state_open": SHADE_STATE_OPEN,
+                  "state_closed": SHADE_STATE_CLOSED,
+                  "state_closing": SHADE_STATE_CLOSING,
+                  "state_opening": SHADE_STATE_OPENING,
+                  "state_stoped": SHADE_STATE_STOPED,
+                  "device_class": "shade",
+                }
             else:
                 raise Exception(f"Unknown entity type: {type(entity)}")
-            discover_topic = f"homeassistant/light/{entity_name}/config"
+            discover_topic = f"homeassistant/{domain}/{entity_name}/config"
             publish_queue.put((discover_topic, json.dumps(discover_payload), True))
             entity.report_state_to_mqtt()
 

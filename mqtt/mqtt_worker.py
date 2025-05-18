@@ -45,6 +45,11 @@ class MqttWorker:
         time.sleep(0.5)
 
     def publish(self):
+        """
+        Thread that maintains an MQTT client to publish the MQTT messages that are put into the self.publish_queue to
+        the MQTT broker.
+        :return:
+        """
         client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         client.loop_start()
         while True:
@@ -64,6 +69,11 @@ class MqttWorker:
                 client.loop_start()
 
     def receive(self):
+        """
+        Thread that maintains the MQTT client to receive messages from the MQTT broker by subscribing to the relevant
+        MQTT topics. When a message is received, the function process_received_message is called by the client.
+        :return:
+        """
         # Use separate client as the MQTT client is not thread safe.
         client = self.initialize_mqtt_client(MqttWorker.process_received_message)
         client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
@@ -81,6 +91,13 @@ class MqttWorker:
 
     @staticmethod
     def process_received_message(client, userdata, msg):
+        """
+        Function to process MQTT set messages from Home Assistant. The entity name is stripped from the topic.
+        :param client:
+        :param userdata:
+        :param msg:
+        :return:
+        """
         from dobiss_entity_helper import get_entities
         from objects.dobiss_entity import DobissEntity
         logger.debug(f"Received topic {msg.topic}, payload: {msg.payload.decode()}")

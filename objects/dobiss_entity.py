@@ -32,10 +32,13 @@ class DobissEntity:
         return DobissEntity.convert_name_to_entity_name(self.name)
 
     def get_mqtt_state_topic(self):
-        return f"homeassistant/light/{self.name}/state"
+        raise NotImplementedError(f"This method needs to be overridden by relevant child classes. ({self})")
 
     def get_mqtt_command_topic(self):
-        return f"homeassistant/light/{self.name}/set"
+        raise NotImplementedError(f"This method needs to be overridden by relevant child classes. ({self})")
+
+    def get_discover_topic(self):
+        raise NotImplementedError(f"This method needs to be overridden by relevant child classes. ({self})")
 
     def set_status(self, new_status, brightness=100):
         raise NotImplementedError(f"This method needs to be overridden by child classes. ({self})")

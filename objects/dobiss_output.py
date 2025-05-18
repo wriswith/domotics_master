@@ -15,8 +15,17 @@ class DobissOutput(DobissEntity):
     def __repr__(self):
         return super().__repr__() + f", M{self.module_number}/O{self.output_number}, status {self.current_status}"
 
+    def get_mqtt_state_topic(self):
+        return f"homeassistant/light/{self.name}/state"
+
+    def get_mqtt_command_topic(self):
+        return f"homeassistant/light/{self.name}/set"
+
     def report_state_to_mqtt(self):
         raise NotImplementedError('This method needs to be overridden.')
+
+    def get_discover_topic(self):
+        return f"homeassistant/light/{self.name}/config"
 
     def get_mqtt_status(self):
         if self.current_status == 1:
