@@ -23,7 +23,7 @@ class MqttWorker:
         self.publish_thread.start()
 
     @staticmethod
-    def initialize_mqtt_client(on_message_callback, subscribe_topics):
+    def initialize_mqtt_client(on_message_callback, subscribe_topics=()):
         client = mqtt.Client()
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
         client.on_message = on_message_callback
