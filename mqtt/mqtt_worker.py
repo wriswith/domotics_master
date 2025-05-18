@@ -10,7 +10,6 @@ from config.config import MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER, MQTT_PORT
 from logger import logger
 from mqtt.publish_discovery_topics import publish_discovery_topics_for_entities
 
-
 _mqtt_worker = None
 
 
@@ -24,13 +23,15 @@ class MqttWorker:
         self.publish_thread.start()
 
     @staticmethod
-    def initialize_mqtt_client(on_message_callback):
+    def initialize_mqtt_client(on_message_callback, subscribe_topics):
         client = mqtt.Client()
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
         client.on_message = on_message_callback
         client.tls_set()
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
         logger.debug("Initialed MQTT client")
+        for topic in subscribe_topics:
+            client.subscribe(topic)
         return client
 
     @staticmethod
@@ -75,8 +76,8 @@ class MqttWorker:
         :return:
         """
         # Use separate client as the MQTT client is not thread safe.
-        client = self.initialize_mqtt_client(MqttWorker.process_received_message)
-        client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
+        client = self.initialize_mqtt_client(MqttWorker.process_received_message,
+                                             ["homeassistant/light/+/set", "homeassistant/cover/+/set"])
         logger.debug("MQTT receive thread started")
         while True:
             try:
@@ -86,8 +87,9 @@ class MqttWorker:
                 # Upon exception create a new connection.
                 traceback.print_exc()
                 client.disconnect()
-                client = self.initialize_mqtt_client(MqttWorker.process_received_message)
-                client.subscribe("homeassistant/light/+/set")  # Subscribe to commands to set the light status.
+                client = self.initialize_mqtt_client(MqttWorker.process_received_message,
+                                                     ["homeassistant/light/+/set",
+                                                      "homeassistant/cover/+/set"])  # Subscribe to commands to set the light status.
 
     @staticmethod
     def process_received_message(client, userdata, msg):
