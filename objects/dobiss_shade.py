@@ -1,5 +1,5 @@
 from config.constants import SHADE, SHADE_STATE_OPEN, SHADE_COMMAND_CLOSE, SHADE_STATE_OPENING, SHADE_COMMAND_OPEN, \
-    SHADE_COMMAND_STOP, SHADE_STATE_CLOSED, SHADE_STATE_STOPED
+    SHADE_COMMAND_STOP, SHADE_STATE_CLOSED, SHADE_STATE_STOPPED
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
@@ -7,11 +7,11 @@ from objects.dobiss_relay import DobissRelay
 
 
 class DobissShade(DobissEntity):
-    def __init__(self, name: str, relays_up: DobissRelay, relays_down: DobissRelay):
+    def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay):
         super().__init__(SHADE, name)
         self.status = SHADE_STATE_OPEN
-        self.relays_up = relays_up
-        self.relays_down = relays_down
+        self.relay_up = relay_up
+        self.relay_down = relay_down
 
     def get_mqtt_state_topic(self):
         return f"homeassistant/cover/{self.name}/state"
@@ -33,16 +33,16 @@ class DobissShade(DobissEntity):
 
     def set_status(self, command, brightness=100):
         if command == SHADE_COMMAND_OPEN:
-            self.relays_up.set_status(1)
+            self.relay_up.set_status(1)
             self.status = SHADE_STATE_OPEN
         elif command == SHADE_COMMAND_CLOSE:
-            self.relays_down.set_status(1)
+            self.relay_down.set_status(1)
             self.status = SHADE_STATE_CLOSED
         elif command == SHADE_COMMAND_STOP:
-            self.relays_down.set_status(0)
-            self.relays_down.set_status(0)
+            self.relay_down.set_status(0)
+            self.relay_down.set_status(0)
             self.status = SHADE_STATE_STOPPED
         else:
-            raise Exception(f"Unknown status: {new_status}")
+            raise Exception(f"Unknown command: {command}")
 
         self.report_state_to_mqtt()
