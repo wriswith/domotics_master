@@ -1,27 +1,17 @@
-from config.constants import SHADE
+from config.constants import SHADE, SHADE_STATE_OPEN, SHADE_COMMAND_CLOSE, SHADE_STATE_OPENING, SHADE_COMMAND_OPEN, \
+    SHADE_COMMAND_STOP
+from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 
-SHADE_STATUS_UP = 'shade up'
-SHADE_STATUS_DOWN = 'shade down'
 
 
 class DobissShade(DobissEntity):
     def __init__(self, name: str, relays_up: DobissRelay, relays_down: DobissRelay):
         super().__init__(SHADE, name)
-        self.status = None
+        self.status = SHADE_STATE_OPEN
         self.relays_up = relays_up
         self.relays_down = relays_down
-
-    def get_msg_to_switch_status(self):
-        if self.status == SHADE_STATUS_UP:
-            self.status = SHADE_STATUS_DOWN
-            self.relays_down.current_status = 1
-            return self.relays_down.get_msg_to_set_status()
-        else:
-            self.status = SHADE_STATUS_UP
-            self.relays_up.current_status = 1
-            return self.relays_up.get_msg_to_set_status()
 
     def get_mqtt_state_topic(self):
         return f"homeassistant/cover/{self.name}/state"
@@ -32,15 +22,23 @@ class DobissShade(DobissEntity):
     def get_discover_topic(self):
         return f"homeassistant/cover/{self.name}/config"
 
+    def report_state_to_mqtt(self):
+        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.status, True))
+
     def switch_status(self):
-        if self.status == SHADE_STATUS_DOWN:
-            self.set_status(SHADE_STATUS_UP)
+        if self.status in (SHADE_STATE_OPEN, SHADE_STATE_OPENING):
+            self.set_status(SHADE_COMMAND_CLOSE)
         else:
-            self.set_status(SHADE_STATUS_DOWN)
+            self.set_status(SHADE_STATE_OPEN)
 
     def set_status(self, new_status, brightness=100):
         self.status = new_status
-        if self.status == SHADE_STATUS_UP:
+        if self.status == SHADE_COMMAND_OPEN:
             self.relays_up.set_status(1)
-        else:
+        elif self.status == SHADE_COMMAND_CLOSE:
             self.relays_down.set_status(1)
+        elif self.status == SHADE_COMMAND_STOP:
+            self.relays_down.set_status(0)
+            self.relays_down.set_status(0)
+        else:
+            raise Exception(f"Unknown status: {new_status}")
