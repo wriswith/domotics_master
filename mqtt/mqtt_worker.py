@@ -110,7 +110,7 @@ class MqttWorker:
         try:
             payload = json.loads(msg.payload.decode())
         except Exception as e:
-            logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})"
+            logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
             raise e
         status = DobissEntity.convert_status_from_mqtt(payload.get("state"))
         brightness = payload.get("brightness")
