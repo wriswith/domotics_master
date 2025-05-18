@@ -24,6 +24,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                     "payload_off": 0,
                     "unique_id": entity_name,
                     "schema": "json",
+                    "retain": False,
                 }
             elif type(entity) is DobissDimmer:
                 domain = "light"
@@ -37,7 +38,8 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                     "brightness": True,
                     "brightness_scale": entity.max_brightness,
                     "payload_on": 1,
-                    "payload_off": 0
+                    "payload_off": 0,
+                    "retain": False,
                 }
             elif type(entity) is DobissShade:
                 domain = "cover"
@@ -57,6 +59,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                   "state_opening": SHADE_STATE_OPENING,
                   "state_stopped": SHADE_STATE_STOPPED,
                   "device_class": "shade",
+                  "retain": False,
                 }
             else:
                 raise Exception(f"Unknown entity type: {type(entity)}")
