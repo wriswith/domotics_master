@@ -107,19 +107,25 @@ class MqttWorker:
         topic = msg.topic
         entity_name = topic[20:-4]
 
-        try:
-            payload = json.loads(msg.payload.decode())
-        except Exception as e:
-            logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
-            raise e
-        status = DobissEntity.convert_status_from_mqtt(payload.get("state"))
-        brightness = payload.get("brightness")
-
         if entity_name not in entities.keys():
-            logger.error(f"Failed to process mqtt topic: {topic}")
+            logger.error(f"Failed to process mqtt topic due to unknown entity name {entity_name}: {topic}")
+            return
+
+        raw_payload = msg.payload.decode()
+        if raw_payload[:1] == "{":
+            try:
+                payload = json.loads(msg.payload.decode())
+            except Exception as e:
+                logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
+                raise e
+            status = DobissEntity.convert_status_from_mqtt(payload.get("state"))
+            brightness = payload.get("brightness")
+        else:
+            status = raw_payload
+            brightness = None
 
         # Handle binary on of switch
-        elif brightness is None:
+        if brightness is None:
             logger.debug(f"Setting {entity_name} to {status}")
             entities[entity_name].set_status(status)
 
