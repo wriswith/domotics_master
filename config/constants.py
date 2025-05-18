@@ -14,7 +14,7 @@ SHADE_STATE_CLOSED = 'closed'
 SHADE_STATE_CLOSING = 'closing'
 SHADE_STATE_OPEN = 'open'
 SHADE_STATE_OPENING = 'opening'
-SHADE_STATE_STOPED = 'stopped'
+SHADE_STATE_STOPPED = 'stopped'
 
 ACTION_SWITCH = 'switch'
 ACTION_TURN_ON = 'turn_on'

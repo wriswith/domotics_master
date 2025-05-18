@@ -1,5 +1,5 @@
 from config.constants import SHADE, SHADE_STATE_OPEN, SHADE_COMMAND_CLOSE, SHADE_STATE_OPENING, SHADE_COMMAND_OPEN, \
-    SHADE_COMMAND_STOP
+    SHADE_COMMAND_STOP, SHADE_STATE_CLOSED, SHADE_STATE_STOPED
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
@@ -31,14 +31,18 @@ class DobissShade(DobissEntity):
         else:
             self.set_status(SHADE_STATE_OPEN)
 
-    def set_status(self, new_status, brightness=100):
-        self.status = new_status
-        if self.status == SHADE_COMMAND_OPEN:
+    def set_status(self, command, brightness=100):
+        if command == SHADE_COMMAND_OPEN:
             self.relays_up.set_status(1)
-        elif self.status == SHADE_COMMAND_CLOSE:
+            self.status = SHADE_STATE_OPEN
+        elif command == SHADE_COMMAND_CLOSE:
             self.relays_down.set_status(1)
-        elif self.status == SHADE_COMMAND_STOP:
+            self.status = SHADE_STATE_CLOSED
+        elif command == SHADE_COMMAND_STOP:
             self.relays_down.set_status(0)
             self.relays_down.set_status(0)
+            self.status = SHADE_STATE_STOPPED
         else:
             raise Exception(f"Unknown status: {new_status}")
+
+        self.report_state_to_mqtt()

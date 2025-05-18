@@ -2,7 +2,7 @@ import json
 from queue import Queue
 
 from config.constants import SHADE_COMMAND_OPEN, SHADE_COMMAND_STOP, SHADE_COMMAND_CLOSE, SHADE_STATE_OPEN, \
-    SHADE_STATE_CLOSED, SHADE_STATE_CLOSING, SHADE_STATE_OPENING, SHADE_STATE_STOPED
+    SHADE_STATE_CLOSED, SHADE_STATE_CLOSING, SHADE_STATE_OPENING, SHADE_STATE_STOPPED
 from mqtt.mqtt_helper import get_mqtt_client
 
 
@@ -55,7 +55,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                   "state_closed": SHADE_STATE_CLOSED,
                   "state_closing": SHADE_STATE_CLOSING,
                   "state_opening": SHADE_STATE_OPENING,
-                  "state_stoped": SHADE_STATE_STOPED,
+                  "state_stopped": SHADE_STATE_STOPPED,
                   "device_class": "shade",
                 }
             else:
