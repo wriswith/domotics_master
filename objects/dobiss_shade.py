@@ -11,7 +11,7 @@ from objects.dobiss_relay import DobissRelay
 class DobissShade(DobissEntity):
     def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay):
         super().__init__(SHADE, name)
-        self.status = SHADE_STATE_OPEN
+        self.status = SHADE_STATE_CLOSED
         self.relay_up = relay_up
         self.relay_down = relay_down
         self._position = 0
@@ -36,21 +36,21 @@ class DobissShade(DobissEntity):
 
     def update_position(self):
         if self.status == SHADE_STATE_CLOSING:
-            self._position = int(self._position - (self.speed * (self._last_calculation_time - time.time())))
-            if self._position <= 0:
-                self._position = 0
-                self.status = SHADE_STATE_CLOSED
-                self.relay_down.set_status(0, force=True)
-                self.relay_down.set_status(0, force=True)
-                self._last_calculation_time = time.time()
-            self.report_state_to_mqtt()
-        elif self.status == SHADE_STATE_OPENING:
             self._position = int(self._position + (self.speed * (self._last_calculation_time - time.time())))
             if self._position >= 100:
                 self._position = 100
+                self.status = SHADE_STATE_CLOSED
+                self.relay_down.set_status(0, force=True)
+                self.relay_up.set_status(0, force=True)
+                self._last_calculation_time = time.time()
+            self.report_state_to_mqtt()
+        elif self.status == SHADE_STATE_OPENING:
+            self._position = int(self._position - (self.speed * (self._last_calculation_time - time.time())))
+            if self._position <= 0:
+                self._position = 0
                 self.status = SHADE_STATE_OPEN
                 self.relay_down.set_status(0, force=True)
-                self.relay_down.set_status(0, force=True)
+                self.relay_up.set_status(0, force=True)
                 self._last_calculation_time = time.time()
             self.report_state_to_mqtt()
 
@@ -118,6 +118,3 @@ class DobissShade(DobissEntity):
         self.relay_down.set_status(0, force=True)
         self.relay_down.set_status(0, force=True)
         self.status = SHADE_STATE_STOPPED
-
-
-

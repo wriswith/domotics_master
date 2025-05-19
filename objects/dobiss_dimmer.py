@@ -12,12 +12,10 @@ class DobissDimmer(DobissOutput):
         super().__init__(DOBISS_DIMMER, name, module_number, output)
         self.min_brightness = min_brightness
         self.max_brightness = max_brightness
-        self.next_brightness_in_cycle = None
-        self.cycle_direction = "down"
+        self.next_brightness_in_cycle = min_brightness
 
     def __repr__(self):
         return super().__repr__() + (f", min/max brightness {self.min_brightness}/{self.max_brightness}, "
-                                     f"direction {self.cycle_direction} "
                                      f"(next brightness: {self.next_brightness_in_cycle})")
 
     def get_brightness_ratio(self):
@@ -49,7 +47,7 @@ class DobissDimmer(DobissOutput):
             self.current_status = new_status
             self.current_brightness = new_brightness
             if new_status == 0:
-                self.next_brightness_in_cycle = None
+                self.next_brightness_in_cycle = self.min_brightness
             logger.debug(f"Setting status of {self.name} to {new_status} (brightness={new_brightness})")
             send_dobiss_command(self.module_id, self.get_msg_to_set_status(self.current_brightness))
             self.report_state_to_mqtt()
@@ -59,25 +57,15 @@ class DobissDimmer(DobissOutput):
 
         # If first loop in cycle, initialize cycle
         if self.next_brightness_in_cycle is None:
-            self.next_brightness_in_cycle = self.current_brightness + step
+            self.next_brightness_in_cycle = self.min_brightness
+
+        self.set_status(1, int(self.next_brightness_in_cycle))
 
         # When going over max brightness, set to max and switch cycle direction
         if self.next_brightness_in_cycle >= self.max_brightness:
-            self.set_status(1, self.max_brightness)
-            self.cycle_direction = 'down'
-            self.next_brightness_in_cycle -= step
-
-        # When going over min brightness, switch direction
-        elif self.next_brightness_in_cycle <= self.min_brightness:
-            self.cycle_direction = 'up'
-            self.set_status(1, self.min_brightness)
-            self.next_brightness_in_cycle += step
+            self.next_brightness_in_cycle = self.min_brightness
 
         # Continue cycle in the requested direction
         else:
-            self.set_status(1, int(self.next_brightness_in_cycle))
-            if self.cycle_direction == 'down':
-                self.next_brightness_in_cycle -= step
-            else:
-                self.next_brightness_in_cycle += step
+            self.next_brightness_in_cycle += step
 
