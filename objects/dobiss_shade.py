@@ -58,13 +58,13 @@ class DobissShade(DobissEntity):
         return f"homeassistant/cover/{self.name}/state"
 
     def get_mqtt_position_topic(self):
-        return f"homeassistant/light/{self.name}/position"
+        return f"homeassistant/cover/{self.name}/position"
 
     def get_mqtt_command_topic(self):
         return f"homeassistant/cover/{self.name}/set"
 
     def get_mqtt_set_position_topic(self):
-        return f"homeassistant/light/{self.name}/set_position"
+        return f"homeassistant/cover/{self.name}/set_position"
 
     def get_discover_topic(self):
         return f"homeassistant/cover/{self.name}/config"
