@@ -1,11 +1,10 @@
 import threading
 
-from config.constants import ACTION_SWITCH, ACTION_TURN_ON, ACTION_TURN_OFF, ACTION_SCHEDULE, ACTION_CYCLE_DIMMER
-from objects.dobiss_entity import DobissEntity
+from config.constants import *
 
 
 class EntityAction:
-    def __init__(self, target_entity: DobissEntity, action: str, named_arguments: {} = None):
+    def __init__(self, target_entity, action: str, named_arguments: {} = None):
         self.target_entity = target_entity
         self.action = action
         self.named_arguments = named_arguments
@@ -24,5 +23,8 @@ class EntityAction:
             threading.Timer(delay, EntityAction.execute, (new_entity_action, )).start()
         elif self.action == ACTION_CYCLE_DIMMER:
             self.target_entity.cycle_brightness()
+        elif self.action in (SHADE_COMMAND_OPEN, SHADE_COMMAND_STOP, SHADE_COMMAND_CLOSE, SHADE_COMMAND_TOGGLE_OPEN,
+                             SHADE_COMMAND_TOGGLE_CLOSE):
+            self.target_entity.set_status(self.action)
         else:
             raise NotImplementedError(f"The action {self.action} is not implemented.")
