@@ -1,14 +1,16 @@
 from queue import Queue
+from threading import Thread
 
 from can_bus_control import get_modules_statuses
 from config.button_entity_mapping import BUTTON_ENTITY_MAP
 from config.config import ACTIVE_PICO_PINS, TEST_RUN
 from config.constants import ACTION_SWITCH
-from dobiss_entity_helper import get_entities, parse_module_status_response
+from dobiss_entity_helper import get_entities, parse_module_status_response, get_entities_of_type
 from logger import logger
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_output import DobissOutput
+from objects.dobiss_shade import DobissShade
 from objects.entity_action import EntityAction
 from one_wire_reader import one_wire_reader
 from switch_event_handler import handle_switch_events
@@ -33,8 +35,15 @@ def dobiss_master():
 
     MqttWorker.get_mqtt_worker().publish_discovery_topics(get_entities())
 
+    start_tracking_shades()
+
     # Execute the actions related to the button events
     handle_switch_events(switch_event_queue, button_entity_map)
+
+
+def start_tracking_shades():
+    shades = get_entities_of_type(DobissShade)
+    Thread(target=DobissShade.position_tracker, args=(shades,)).start()
 
 
 def report_initial_state():

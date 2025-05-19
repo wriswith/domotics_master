@@ -8,7 +8,6 @@ from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 
 
-
 class DobissShade(DobissEntity):
     def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay):
         super().__init__(SHADE, name)
@@ -18,6 +17,17 @@ class DobissShade(DobissEntity):
         self._position = 0
         self._last_calculation_time = time.time()   # Calculation needs to be run before every move command to have a consistent position.
         self.speed = 10  # % position change per second
+
+    @staticmethod
+    def position_tracker(shades):
+        """
+        Method to be run in separate thread to continuously track the position of each shade.
+        :param shades:
+        :return:
+        """
+        for entity_name in shades:
+            shades[entity_name].update_position()
+        time.sleep(0.5)
 
     @property
     def position(self):

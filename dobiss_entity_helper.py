@@ -125,3 +125,12 @@ def parse_module_status_response(response: bytes, module_number: int):
                         entity.current_brightness = response_byte
                 else:
                     entity.current_status = response_byte
+
+
+def get_entities_of_type(entity_type):
+    result = {}
+    entities = get_entities(include_shade_relays=True)
+    for entity_name, entity in entities.items():
+        if issubclass(entity, entity_type):
+            result[entity_name] = entity
+    return result
