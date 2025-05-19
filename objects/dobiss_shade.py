@@ -60,7 +60,9 @@ class DobissShade(DobissEntity):
         return f"homeassistant/cover/{self.name}/config"
 
     def report_state_to_mqtt(self):
-        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.status, True))
+        publish_queue = MqttWorker.get_mqtt_worker().publish_queue
+        publish_queue.put((self.get_mqtt_state_topic(), self.status, True))
+        publish_queue.put((self.get_mqtt_position_topic(), self._position, True))
 
     def switch_status(self):
         if self.status in (SHADE_STATE_OPEN, SHADE_STATE_OPENING):
