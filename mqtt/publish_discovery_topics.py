@@ -2,7 +2,7 @@ import json
 from queue import Queue
 
 from config.constants import SHADE_COMMAND_OPEN, SHADE_COMMAND_STOP, SHADE_COMMAND_CLOSE, SHADE_STATE_OPEN, \
-    SHADE_STATE_CLOSED, SHADE_STATE_CLOSING, SHADE_STATE_OPENING, SHADE_STATE_STOPPED
+    SHADE_STATE_CLOSED, SHADE_STATE_CLOSING, SHADE_STATE_OPENING, SHADE_STATE_STOPPED, VENTILATION
 from mqtt.mqtt_helper import get_mqtt_client
 
 
@@ -13,7 +13,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
     from objects.dobiss_shade import DobissShade
     for entity_name in entities:
         entity = entities[entity_name]
-        if isinstance(entity, DobissOutput) or type(entity) is DobissShade:
+        if (isinstance(entity, DobissOutput) and entity.device_type != VENTILATION) or type(entity) is DobissShade:
             if type(entity) is DobissRelay:
                 domain = "light"
                 discover_payload = {

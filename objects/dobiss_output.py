@@ -1,16 +1,18 @@
 import json
 
+from config.constants import LIGHT
 from config.dobiss_entity_config import DOBISS_MODULES
 from objects.dobiss_entity import DobissEntity
 
 
 class DobissOutput(DobissEntity):
-    def __init__(self, dobiss_type: str, name: str, module_number: int, output_number: int):
+    def __init__(self, dobiss_type: str, name: str, module_number: int, output_number: int, device_type=LIGHT):
         super().__init__(dobiss_type, name)
         self.module_number = module_number
         self.module_id = DOBISS_MODULES[module_number]['id']
         self.output_number = output_number
         self.current_status = 0
+        self.device_type = device_type
 
     def __repr__(self):
         return super().__repr__() + f", M{self.module_number}/O{self.output_number}, status {self.current_status}"
