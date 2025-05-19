@@ -30,8 +30,8 @@ class DobissShade(DobissEntity):
             if self._position <= 0:
                 self._position = 0
                 self.status = SHADE_STATE_CLOSED
-                self.relay_down.set_status(0)
-                self.relay_down.set_status(0)
+                self.relay_down.set_status(0, force=True)
+                self.relay_down.set_status(0, force=True)
                 self._last_calculation_time = time.time()
             self.report_state_to_mqtt()
         elif self.status == SHADE_STATE_OPENING:
@@ -39,8 +39,8 @@ class DobissShade(DobissEntity):
             if self._position >= 100:
                 self._position = 100
                 self.status = SHADE_STATE_OPEN
-                self.relay_down.set_status(0)
-                self.relay_down.set_status(0)
+                self.relay_down.set_status(0, force=True)
+                self.relay_down.set_status(0, force=True)
                 self._last_calculation_time = time.time()
             self.report_state_to_mqtt()
 
@@ -93,18 +93,18 @@ class DobissShade(DobissEntity):
 
     def open(self):
         self.update_position()
-        self.relay_up.set_status(1)
+        self.relay_up.set_status(1, force=True)
         self.status = SHADE_STATE_OPENING
 
     def close(self):
         self.update_position()
-        self.relay_down.set_status(1)
+        self.relay_down.set_status(1, force=True)
         self.status = SHADE_STATE_CLOSING
 
     def stop(self):
         self.update_position()
-        self.relay_down.set_status(0)
-        self.relay_down.set_status(0)
+        self.relay_down.set_status(0, force=True)
+        self.relay_down.set_status(0, force=True)
         self.status = SHADE_STATE_STOPPED
 
 

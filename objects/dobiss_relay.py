@@ -18,8 +18,8 @@ class DobissRelay(DobissOutput):
     def report_state_to_mqtt(self):
         MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status(), True))
 
-    def set_status(self, new_status, brightness=100):
-        if self.current_brightness == brightness and self.current_status == new_status:
+    def set_status(self, new_status, brightness=100, force=False):
+        if self.current_brightness == brightness and self.current_status == new_status and not force:
             logger.debug(f"Ignoring status update for {self.name} because the new status equals the current status")
         else:
             self.current_status = new_status
