@@ -131,8 +131,6 @@ def get_entities_of_type(entity_type):
     result = {}
     entities = get_entities(include_shade_relays=True)
     for entity_name, entity in entities.items():
-        print(entity)
-        print(entity_type)
-        if issubclass(entity, entity_type):
+        if isinstance(entity, entity_type):
             result[entity_name] = entity
     return result
