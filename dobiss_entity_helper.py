@@ -43,7 +43,7 @@ def generate_entities_from_config():
             entities[entity_name] = DobissDimmer(entity_name, entity_config['module'], entity_config['output'],
                                                  min_brightness, max_brightness)
         elif entity_config['dobiss_type'] == DOBISS_RELAY:
-            entities[entity_name] = DobissRelay(entity_name, entity_config['module'], entity_config['output'])
+            entities[entity_name] = DobissRelay(entity_name, entity_config['module'], entity_config['output'], entity_config['ha_type'])
         else:
             NotImplementedError()
 
