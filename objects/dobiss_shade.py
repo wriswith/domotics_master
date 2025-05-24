@@ -30,10 +30,12 @@ class DobissShade(DobissEntity):
         :param shades:
         :return:
         """
-        for entity_name in shades:
-            shades[entity_name].update_position()
-            logger.debug(shades[entity_name])
-        time.sleep(0.5)
+        while True:
+            for entity_name in shades:
+                if shades[entity_name].status in (SHADE_STATE_CLOSING, SHADE_STATE_OPENING)
+                    shades[entity_name].update_position()
+                    logger.debug(shades[entity_name])
+            time.sleep(0.5)
 
     @property
     def position(self):
