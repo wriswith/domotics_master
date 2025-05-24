@@ -10,14 +10,15 @@ from objects.dobiss_relay import DobissRelay
 
 
 class DobissShade(DobissEntity):
-    def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay, speed=9):
+    def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay, speed_up, speed_down):
         super().__init__(SHADE, name)
         self.status = SHADE_STATE_CLOSED
         self.relay_up = relay_up
         self.relay_down = relay_down
         self._position = 0
         self._last_calculation_time = time.time()  # Calculation needs to be run before every move command to have a consistent position.
-        self.speed = speed  # % position change per second
+        self.speed_up = speed_up  # % position change per second
+        self.speed_down = speed_down  # % position change per second
 
     def __repr__(self):
         return super().__repr__() + (f" status: {self.status}, relay_up: {self.relay_up.current_status}, "
