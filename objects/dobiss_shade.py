@@ -18,6 +18,10 @@ class DobissShade(DobissEntity):
         self._last_calculation_time = time.time()   # Calculation needs to be run before every move command to have a consistent position.
         self.speed = 10  # % position change per second
 
+    def __repr__(self):
+        return super.__repr__(self) + (f" status: {self.status}, relay_up: {self.relay_up.current_status}, "
+                                       f"relay_down: {self.relay_down.current_status}, _position {self._position}")
+
     @staticmethod
     def position_tracker(shades):
         """
