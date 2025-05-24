@@ -54,7 +54,7 @@ def generate_entities_from_config():
                                       shade_config["output_up"]['output'])
         shade_down_entity = DobissRelay(f"{shade_name}_down", shade_config["output_down"]['module'],
                                         shade_config["output_down"]['output'])
-        entities[shade_name] = DobissShade(shade_name, shade_up_entity, shade_down_entity)
+        entities[shade_name] = DobissShade(shade_name, shade_up_entity, shade_down_entity, shade_config["speed"])
         shade_relay_entities.extend((shade_up_entity, shade_down_entity))
 
     for friendly_scene_name in DOBISS_SCENES_CONFIG:
