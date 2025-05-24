@@ -24,12 +24,13 @@ class DobissShade(DobissEntity):
                                      f"relay_down: {self.relay_down.current_status}, _position {self._position}")
 
     @staticmethod
-    def position_tracker(shades):
+    def position_tracker(shades: dict):
         """
         Method to be run in separate thread to continuously track the position of each shade.
         :param shades:
         :return:
         """
+        logger.debug(f"Tracking shade position for {len(shades)} shades. ({shades.keys()})")
         while True:
             for entity_name in shades:
                 if shades[entity_name].status in (SHADE_STATE_CLOSING, SHADE_STATE_OPENING):
