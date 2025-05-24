@@ -3,6 +3,7 @@ import time
 from config.constants import SHADE, SHADE_STATE_OPEN, SHADE_COMMAND_CLOSE, SHADE_STATE_OPENING, SHADE_COMMAND_OPEN, \
     SHADE_COMMAND_STOP, SHADE_STATE_CLOSED, SHADE_STATE_STOPPED, SHADE_STATE_CLOSING, SHADE_COMMAND_TOGGLE_OPEN, \
     SHADE_COMMAND_TOGGLE_CLOSE
+from logger import logger
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
@@ -31,6 +32,7 @@ class DobissShade(DobissEntity):
         """
         for entity_name in shades:
             shades[entity_name].update_position()
+            logger.debug(shades[entity_name])
         time.sleep(0.5)
 
     @property
