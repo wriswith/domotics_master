@@ -1,5 +1,5 @@
 from can_bus_control import send_dobiss_command
-from config.constants import DOBISS_RELAY, LIGHT, VENTILATION
+from config.constants import DOBISS_RELAY, LIGHT, VENTILATION, SHADE
 from logger import logger
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_output import DobissOutput
@@ -16,7 +16,7 @@ class DobissRelay(DobissOutput):
             self.set_status(0)
 
     def report_state_to_mqtt(self):
-        if self.device_type != VENTILATION:
+        if self.device_type != VENTILATION and self.device_type != SHADE:
             MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status(), True))
 
     def set_status(self, new_status, brightness=100, force=False):

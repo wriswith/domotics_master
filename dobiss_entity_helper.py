@@ -1,6 +1,6 @@
 from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_SHADES_CONFIG, \
     DOBISS_SCENES_CONFIG, DOBISS_MODULES
-from config.constants import DOBISS_RELAY, DOBISS_DIMMER
+from config.constants import DOBISS_RELAY, DOBISS_DIMMER, SHADE
 from objects.dobiss_dimmer import DobissDimmer
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
@@ -51,9 +51,9 @@ def generate_entities_from_config():
         shade_name = DobissEntity.convert_name_to_entity_name(friendly_shade_name)
         shade_config = DOBISS_SHADES_CONFIG[friendly_shade_name]
         shade_up_entity = DobissRelay(f"{shade_name}_up", shade_config["output_up"]['module'],
-                                      shade_config["output_up"]['output'])
+                                      shade_config["output_up"]['output'], device_type=SHADE)
         shade_down_entity = DobissRelay(f"{shade_name}_down", shade_config["output_down"]['module'],
-                                        shade_config["output_down"]['output'])
+                                        shade_config["output_down"]['output'], device_type=SHADE)
         entities[shade_name] = DobissShade(shade_name, shade_up_entity, shade_down_entity, shade_config["speed"])
         shade_relay_entities.extend((shade_up_entity, shade_down_entity))
 
