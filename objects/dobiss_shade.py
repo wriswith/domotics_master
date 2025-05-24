@@ -53,6 +53,8 @@ class DobissShade(DobissEntity):
                 self._last_calculation_time = time.time()
             self.report_state_to_mqtt()
         elif self.status == SHADE_STATE_OPENING:
+            logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
+            logger.debug(f"step {self.speed * (time.time() - self._last_calculation_time)}")
             self._position = int(self._position - (self.speed * (time.time() - self._last_calculation_time)))
             if self._position <= 0:
                 self._position = 0
