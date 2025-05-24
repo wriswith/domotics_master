@@ -32,7 +32,7 @@ class DobissShade(DobissEntity):
         """
         while True:
             for entity_name in shades:
-                if shades[entity_name].status in (SHADE_STATE_CLOSING, SHADE_STATE_OPENING)
+                if shades[entity_name].status in (SHADE_STATE_CLOSING, SHADE_STATE_OPENING):
                     shades[entity_name].update_position()
                     logger.debug(shades[entity_name])
             time.sleep(0.5)
@@ -44,7 +44,7 @@ class DobissShade(DobissEntity):
 
     def update_position(self):
         if self.status == SHADE_STATE_CLOSING:
-            self._position = int(self._position + (self.speed * (self._last_calculation_time - time.time())))
+            self._position = int(self._position + (self.speed * (time.time() - self._last_calculation_time)))
             if self._position >= 100:
                 self._position = 100
                 self.status = SHADE_STATE_CLOSED
@@ -53,7 +53,7 @@ class DobissShade(DobissEntity):
                 self._last_calculation_time = time.time()
             self.report_state_to_mqtt()
         elif self.status == SHADE_STATE_OPENING:
-            self._position = int(self._position - (self.speed * (self._last_calculation_time - time.time())))
+            self._position = int(self._position - (self.speed * (time.time() - self._last_calculation_time)))
             if self._position <= 0:
                 self._position = 0
                 self.status = SHADE_STATE_OPEN
