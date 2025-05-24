@@ -48,9 +48,9 @@ class DobissShade(DobissEntity):
         if self.status == SHADE_STATE_CLOSING:
 
             logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
-            logger.debug(f"step {self.speed * (time.time() - self._last_calculation_time)}")
+            logger.debug(f"step {self.speed_up * (time.time() - self._last_calculation_time)}")
 
-            self._position = int(self._position + (self.speed * (time.time() - self._last_calculation_time)))
+            self._position = int(self._position + (self.speed_up * (time.time() - self._last_calculation_time)))
             self._last_calculation_time = time.time()
             if self._position >= 100:
                 self._position = 100
@@ -61,9 +61,9 @@ class DobissShade(DobissEntity):
         elif self.status == SHADE_STATE_OPENING:
 
             logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
-            logger.debug(f"step {self.speed * (time.time() - self._last_calculation_time)}")
+            logger.debug(f"step {self.speed_down * (time.time() - self._last_calculation_time)}")
 
-            self._position = int(self._position - (self.speed * (time.time() - self._last_calculation_time)))
+            self._position = int(self._position - (self.speed_down * (time.time() - self._last_calculation_time)))
             self._last_calculation_time = time.time()
             if self._position <= 0:
                 self._position = 0
