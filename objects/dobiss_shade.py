@@ -12,7 +12,7 @@ from objects.dobiss_relay import DobissRelay
 class DobissShade(DobissEntity):
     def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay, speed_up, speed_down):
         super().__init__(SHADE, name)
-        self.status = SHADE_STATE_DOWN
+        self.status = SHADE_STATE_UP
         self.relay_up = relay_up
         self.relay_down = relay_down
         self._position = 0
