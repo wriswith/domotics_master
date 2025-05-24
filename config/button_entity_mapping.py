@@ -1,5 +1,5 @@
-from config.constants import ACTION_CYCLE_DIMMER, BUTTON_SHORT_INSTA, BUTTON_SHORT_RELEASE, BUTTON_LONG_RELEASE, \
-    BUTTON_LONG_HOLD, BUTTON_LONG_INSTA, SHADE_COMMAND_TOGGLE_OPEN, SHADE_COMMAND_TOGGLE_CLOSE
+from config.constants import ACTION_CYCLE_DIMMER, BUTTON_SHORT_INSTA, BUTTON_SHORT_RELEASE, \
+    BUTTON_LONG_HOLD, BUTTON_LONG_INSTA, SHADE_COMMAND_TOGGLE_UP, SHADE_COMMAND_TOGGLE_DOWN
 
 # Create a mapping between the button names and the actions linked to the different possible trigger modes
 
@@ -40,8 +40,8 @@ BUTTON_ENTITY_MAP = {
     "kind_deur_1": {BUTTON_SHORT_RELEASE: 'Slaapkamer Daniel', BUTTON_LONG_HOLD: ('Slaapkamer Daniel', ACTION_CYCLE_DIMMER)},
     "ouders_deur_1": {BUTTON_SHORT_RELEASE: 'Slaapkamer Ouders', BUTTON_LONG_HOLD: ('Slaapkamer Ouders', ACTION_CYCLE_DIMMER)},
     "ouders_bed_1": {BUTTON_SHORT_RELEASE: 'Slaapkamer Ouders', BUTTON_LONG_HOLD: ('Slaapkamer Ouders', ACTION_CYCLE_DIMMER)},
-    "ouders_screen_1": {BUTTON_SHORT_INSTA: ('Shade_Slaapkamer Ouders', SHADE_COMMAND_TOGGLE_OPEN)},
-    "ouders_screen_2": {BUTTON_SHORT_INSTA: ('Shade_Slaapkamer Ouders', SHADE_COMMAND_TOGGLE_CLOSE)},
+    "ouders_screen_1": {BUTTON_SHORT_INSTA: ('Shade_Slaapkamer Ouders', SHADE_COMMAND_TOGGLE_UP)},
+    "ouders_screen_2": {BUTTON_SHORT_INSTA: ('Shade_Slaapkamer Ouders', SHADE_COMMAND_TOGGLE_DOWN)},
     "dressing_1": {BUTTON_SHORT_INSTA: 'Dressing'},
     "badkamer_1": {BUTTON_SHORT_INSTA: 'Badkamer'},
     "badkamer_2": {BUTTON_SHORT_INSTA: 'Spiegel'},

@@ -31,11 +31,10 @@ def get_can_bus():
 
 
 def send_dobiss_command(module_id, msg_data):
-    if TEST_RUN:
-        return None
-    bus = get_can_bus()
-    msg = create_can_message(module_id, msg_data)
-    send_can_message(msg, bus)
+    if not TEST_RUN:
+        bus = get_can_bus()
+        msg = create_can_message(module_id, msg_data)
+        send_can_message(msg, bus)
 
 
 def create_can_message(arbitration_id: int, data: bytes):
@@ -55,7 +54,6 @@ def send_can_message(message: Message, bus: can.interface.Bus):
     """
     try:
         bus.send(message)
-        return True
     except can.CanError as e:
         logger.error(f"Message NOT sent: {e}")
         raise e

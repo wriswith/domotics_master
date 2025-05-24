@@ -1,8 +1,8 @@
 import json
 from queue import Queue
 
-from config.constants import SHADE_COMMAND_OPEN, SHADE_COMMAND_STOP, SHADE_COMMAND_CLOSE, SHADE_STATE_OPEN, \
-    SHADE_STATE_CLOSED, SHADE_STATE_CLOSING, SHADE_STATE_OPENING, SHADE_STATE_STOPPED, VENTILATION, SHADE, LIGHT
+from config.constants import SHADE_COMMAND_UP, SHADE_COMMAND_STOP, SHADE_COMMAND_DOWN, SHADE_STATE_UP, \
+    SHADE_STATE_DOWN, SHADE_STATE_GOING_DOWN, SHADE_STATE_GOING_UP, SHADE_STATE_STOPPED, LIGHT
 from mqtt.mqtt_helper import get_mqtt_client
 
 
@@ -50,13 +50,13 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                   "state_topic": entity.get_mqtt_state_topic(),
                   "position_topic": entity.get_mqtt_position_topic(),
                   "set_position_topic": entity.get_mqtt_set_position_topic(),
-                  "payload_open": SHADE_COMMAND_OPEN,
-                  "payload_close": SHADE_COMMAND_CLOSE,
+                  "payload_open": SHADE_COMMAND_UP,
+                  "payload_close": SHADE_COMMAND_DOWN,
                   "payload_stop": SHADE_COMMAND_STOP,
-                  "state_open": SHADE_STATE_OPEN,
-                  "state_closed": SHADE_STATE_CLOSED,
-                  "state_closing": SHADE_STATE_CLOSING,
-                  "state_opening": SHADE_STATE_OPENING,
+                  "state_open": SHADE_STATE_UP,
+                  "state_closed": SHADE_STATE_DOWN,
+                  "state_closing": SHADE_STATE_GOING_DOWN,
+                  "state_opening": SHADE_STATE_GOING_UP,
                   "state_stopped": SHADE_STATE_STOPPED,
                   "device_class": "shade",
                   "retain": False,

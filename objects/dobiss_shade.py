@@ -1,8 +1,8 @@
 import time
 
-from config.constants import SHADE, SHADE_STATE_OPEN, SHADE_COMMAND_CLOSE, SHADE_STATE_OPENING, SHADE_COMMAND_OPEN, \
-    SHADE_COMMAND_STOP, SHADE_STATE_CLOSED, SHADE_STATE_STOPPED, SHADE_STATE_CLOSING, SHADE_COMMAND_TOGGLE_OPEN, \
-    SHADE_COMMAND_TOGGLE_CLOSE
+from config.constants import SHADE, SHADE_STATE_UP, SHADE_COMMAND_DOWN, SHADE_STATE_GOING_UP, SHADE_COMMAND_UP, \
+    SHADE_COMMAND_STOP, SHADE_STATE_DOWN, SHADE_STATE_STOPPED, SHADE_STATE_GOING_DOWN, SHADE_COMMAND_TOGGLE_UP, \
+    SHADE_COMMAND_TOGGLE_DOWN
 from logger import logger
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
@@ -12,7 +12,7 @@ from objects.dobiss_relay import DobissRelay
 class DobissShade(DobissEntity):
     def __init__(self, name: str, relay_up: DobissRelay, relay_down: DobissRelay, speed_up, speed_down):
         super().__init__(SHADE, name)
-        self.status = SHADE_STATE_CLOSED
+        self.status = SHADE_STATE_DOWN
         self.relay_up = relay_up
         self.relay_down = relay_down
         self._position = 0
@@ -34,7 +34,7 @@ class DobissShade(DobissEntity):
         logger.debug(f"Tracking shade position for {len(shades)} shades. ({shades.keys()})")
         while True:
             for entity_name in shades:
-                if shades[entity_name].status in (SHADE_STATE_CLOSING, SHADE_STATE_OPENING):
+                if shades[entity_name].status in (SHADE_STATE_GOING_DOWN, SHADE_STATE_GOING_UP):
                     shades[entity_name].update_position()
                     logger.debug(shades[entity_name])
             time.sleep(0.5)
@@ -45,7 +45,7 @@ class DobissShade(DobissEntity):
         return self._position
 
     def update_position(self):
-        if self.status == SHADE_STATE_CLOSING:
+        if self.status == SHADE_STATE_GOING_DOWN:
 
             logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
             logger.debug(f"step {self.speed_down * (time.time() - self._last_calculation_time)}")
@@ -54,11 +54,11 @@ class DobissShade(DobissEntity):
             self._last_calculation_time = time.time()
             if self._position >= 100:
                 self._position = 100
-                self.status = SHADE_STATE_CLOSED
+                self.status = SHADE_STATE_DOWN
                 self.relay_down.set_status(0, force=True)
                 self.relay_up.set_status(0, force=True)
             self.report_state_to_mqtt()
-        elif self.status == SHADE_STATE_OPENING:
+        elif self.status == SHADE_STATE_GOING_UP:
 
             logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
             logger.debug(f"step {self.speed_up * (time.time() - self._last_calculation_time)}")
@@ -67,12 +67,11 @@ class DobissShade(DobissEntity):
             self._last_calculation_time = time.time()
             if self._position <= 0:
                 self._position = 0
-                self.status = SHADE_STATE_OPEN
+                self.status = SHADE_STATE_UP
                 self.relay_down.set_status(0, force=True)
                 self.relay_up.set_status(0, force=True)
 
             self.report_state_to_mqtt()
-
 
     def get_mqtt_state_topic(self):
         return f"homeassistant/cover/{self.name}/state"
@@ -95,46 +94,46 @@ class DobissShade(DobissEntity):
         publish_queue.put((self.get_mqtt_position_topic(), self._position, True))
 
     def switch_status(self):
-        if self.status in (SHADE_STATE_OPEN, SHADE_STATE_OPENING):
-            self.set_status(SHADE_COMMAND_CLOSE)
+        if self.status in (SHADE_STATE_UP, SHADE_STATE_GOING_UP):
+            self.set_status(SHADE_COMMAND_DOWN)
         else:
-            self.set_status(SHADE_STATE_OPEN)
+            self.set_status(SHADE_STATE_UP)
 
     def set_status(self, command, brightness=100):
-        if command == SHADE_COMMAND_OPEN:
-            self.open()
-        elif command == SHADE_COMMAND_CLOSE:
-            self.close()
+        if command == SHADE_COMMAND_UP:
+            self.up()
+        elif command == SHADE_COMMAND_DOWN:
+            self.down()
         elif command == SHADE_COMMAND_STOP:
             self.stop()
-        elif command == SHADE_COMMAND_TOGGLE_OPEN:
-            if self.status == SHADE_STATE_OPENING:
+        elif command == SHADE_COMMAND_TOGGLE_UP:
+            if self.status == SHADE_STATE_GOING_UP:
                 self.stop()
             else:
-                self.open()
-        elif command == SHADE_COMMAND_TOGGLE_CLOSE:
-            if self.status == SHADE_STATE_CLOSING:
+                self.up()
+        elif command == SHADE_COMMAND_TOGGLE_DOWN:
+            if self.status == SHADE_STATE_GOING_DOWN:
                 self.stop()
             else:
-                self.close()
+                self.down()
         else:
             raise Exception(f"Unknown command: {command}")
 
         self._last_calculation_time = time.time()
         self.report_state_to_mqtt()
 
-    def open(self):
+    def up(self):
         self.update_position()
         self.relay_up.set_status(1, force=True)
-        self.status = SHADE_STATE_OPENING
+        self.status = SHADE_STATE_GOING_UP
 
-    def close(self):
+    def down(self):
         self.update_position()
         self.relay_down.set_status(1, force=True)
-        self.status = SHADE_STATE_CLOSING
+        self.status = SHADE_STATE_GOING_DOWN
 
     def stop(self):
         self.update_position()
         self.relay_down.set_status(0, force=True)
-        self.relay_down.set_status(0, force=True)
+        self.relay_up.set_status(0, force=True)
         self.status = SHADE_STATE_STOPPED

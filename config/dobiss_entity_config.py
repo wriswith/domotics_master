@@ -91,7 +91,6 @@ def generate_alles_uit_scene():
             DOBISS_SCENES_CONFIG["SCENE Alles uit"].append((light_name, ACTION_TURN_OFF))
 
 
-
 generate_alles_uit_scene()
 
 # List of all the modules in the system. Every module has the following attributes
