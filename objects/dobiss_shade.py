@@ -45,6 +45,10 @@ class DobissShade(DobissEntity):
 
     def update_position(self):
         if self.status == SHADE_STATE_CLOSING:
+
+            logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
+            logger.debug(f"step {self.speed * (time.time() - self._last_calculation_time)}")
+
             self._position = int(self._position + (self.speed * (time.time() - self._last_calculation_time)))
             self._last_calculation_time = time.time()
             if self._position >= 100:
@@ -54,8 +58,10 @@ class DobissShade(DobissEntity):
                 self.relay_up.set_status(0, force=True)
             self.report_state_to_mqtt()
         elif self.status == SHADE_STATE_OPENING:
+
             logger.debug(f"time_dif {time.time() - self._last_calculation_time}")
             logger.debug(f"step {self.speed * (time.time() - self._last_calculation_time)}")
+
             self._position = int(self._position - (self.speed * (time.time() - self._last_calculation_time)))
             self._last_calculation_time = time.time()
             if self._position <= 0:
@@ -65,6 +71,7 @@ class DobissShade(DobissEntity):
                 self.relay_up.set_status(0, force=True)
 
             self.report_state_to_mqtt()
+
 
     def get_mqtt_state_topic(self):
         return f"homeassistant/cover/{self.name}/state"
