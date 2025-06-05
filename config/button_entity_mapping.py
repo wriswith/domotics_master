@@ -1,5 +1,5 @@
 from config.constants import ACTION_CYCLE_DIMMER, BUTTON_SHORT_INSTA, BUTTON_SHORT_RELEASE, \
-    BUTTON_LONG_HOLD, BUTTON_LONG_INSTA, SHADE_COMMAND_TOGGLE_UP, SHADE_COMMAND_TOGGLE_DOWN
+    BUTTON_LONG_HOLD, BUTTON_LONG_INSTA, SHADE_COMMAND_TOGGLE_UP, SHADE_COMMAND_TOGGLE_DOWN, ACTION_SWITCH
 
 # Create a mapping between the button names and the actions linked to the different possible trigger modes
 
@@ -45,7 +45,7 @@ BUTTON_ENTITY_MAP = {
     "dressing_1": {BUTTON_SHORT_INSTA: 'Dressing'},
     "badkamer_1": {BUTTON_SHORT_INSTA: 'Badkamer'},
     "badkamer_2": {BUTTON_SHORT_INSTA: 'Spiegel'},
-    "badkamer_3": {BUTTON_SHORT_INSTA: 'SCENE douche'},
+    "badkamer_3": {BUTTON_SHORT_INSTA: 'SCENE douche', BUTTON_LONG_HOLD: ('Douche', ACTION_SWITCH)},
     "trap_zolder_1": {BUTTON_SHORT_INSTA: 'Zolder'},
     "beestje_1": {BUTTON_SHORT_RELEASE: 'Bureau Beestje', BUTTON_LONG_HOLD: ('Bureau Beestje', ACTION_CYCLE_DIMMER)},
     "wasplaats_1": {BUTTON_SHORT_INSTA: 'Wasplaats'},
