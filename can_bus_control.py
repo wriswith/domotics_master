@@ -85,3 +85,8 @@ def get_modules_statuses():
         logger.debug(f"Complete response: {complete_response.hex()}")
         result[module.module_number] = complete_response
     return result
+
+if __name__ == '__main__':
+    bus = get_can_bus()
+    bus.send(create_can_message(0x00400102, b'\x01\x01\x01\xff\xff\x00\xff\xff'))
+    bus.shutdown()
