@@ -89,7 +89,7 @@ def button_pressed(message: OneWireMessage, switch_event_queue: Queue):
 def button_held(button_down_message: OneWireMessage, current_message: OneWireMessage, switch_event_queue: Queue):
     switch_event_queue.put(SwitchEvent(circuit_id=button_down_message.circuit_id,
                                        action=SWITCH_ACTION_HOLD,
-                                       duration=(current_message.frame_number - button_down_message.frame_number) * 0.6))
+                                       duration=(current_message.frame_number - button_down_message.frame_number) * 0.07))
     logger.debug(f"Button held ({button_down_message.get_button_label()})")
 
 
