@@ -35,15 +35,15 @@ def dobiss_master():
 
     MqttWorker.get_mqtt_worker().publish_discovery_topics(get_entities())
 
-    start_tracking_shades()
+    # start_tracking_shades()
 
     # Execute the actions related to the button events
     handle_switch_events(switch_event_queue, button_entity_map)
 
 
-def start_tracking_shades():
-    shades = get_entities_of_type(DobissShade)
-    Thread(target=DobissShade.position_tracker, args=(shades,)).start()
+# def start_tracking_shades():
+#     shades = get_entities_of_type(DobissShade)
+#     Thread(target=DobissShade.position_tracker, args=(shades,)).start()
 
 
 def report_initial_state():
