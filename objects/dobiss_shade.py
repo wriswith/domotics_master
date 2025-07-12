@@ -3,7 +3,7 @@ import time
 
 from config.constants import SHADE, SHADE_STATE_UP, SHADE_COMMAND_DOWN, SHADE_STATE_GOING_UP, SHADE_COMMAND_UP, \
     SHADE_COMMAND_STOP, SHADE_STATE_STOPPED, SHADE_STATE_GOING_DOWN, SHADE_COMMAND_TOGGLE_UP, \
-    SHADE_COMMAND_TOGGLE_DOWN
+    SHADE_COMMAND_TOGGLE_DOWN, SHADE_STATE_DOWN
 from logger import logger
 from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
@@ -126,20 +126,20 @@ class DobissShade(DobissEntity):
     def up(self):
         self.relay_down.set_status(0, force=True)
         self.relay_up.set_status(1, force=True)
-        self.status = SHADE_STATE_GOING_UP
+        self.status = SHADE_STATE_UP
         self.schedule_stop()
 
     def down(self):
         self.relay_up.set_status(0, force=True)
         self.relay_down.set_status(1, force=True)
-        self.status = SHADE_STATE_GOING_DOWN
+        self.status = SHADE_STATE_DOWN
         self.schedule_stop()
 
     def stop(self):
         self.relay_down.set_status(0, force=True)
         self.relay_up.set_status(0, force=True)
-        self.status = SHADE_STATE_STOPPED
+        # self.status = SHADE_STATE_STOPPED
 
-    def schedule_stop(self, delay=17):
+    def schedule_stop(self, delay=15):
         threading.Timer(delay, EntityAction.execute, (EntityAction(self,
                                                                    SHADE_COMMAND_STOP),)).start()  # Reset switches when the screen is done moving.
