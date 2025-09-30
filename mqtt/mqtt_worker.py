@@ -24,15 +24,22 @@ class MqttWorker:
 
     @staticmethod
     def initialize_mqtt_client(on_message_callback, subscribe_topics=()):
-        client = mqtt.Client()
-        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-        client.on_message = on_message_callback
-        client.tls_set()
-        client.connect(MQTT_BROKER, MQTT_PORT, 60)
-        logger.debug("Initialed MQTT client")
-        for topic in subscribe_topics:
-            client.subscribe(topic)
-        return client
+        try:
+            client = mqtt.Client()
+            client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+            client.on_message = on_message_callback
+            client.tls_set()
+            client.connect(MQTT_BROKER, MQTT_PORT, 60)
+            logger.debug("Initialed MQTT client")
+            for topic in subscribe_topics:
+                client.subscribe(topic)
+            return client
+        except Exception as e:
+            logger.error(f"MQTT client failed to initialize with error: {e}")
+            # Upon exception create a new connection.
+            traceback.print_exc()
+            time.sleep(120)
+            return MqttWorker.initialize_mqtt_client(on_message_callback, subscribe_topics)
 
     @staticmethod
     def get_mqtt_worker():
@@ -87,6 +94,7 @@ class MqttWorker:
                 # Upon exception create a new connection.
                 traceback.print_exc()
                 client.disconnect()
+                time.sleep(3)
                 client = self.initialize_mqtt_client(MqttWorker.process_received_message,
                                                      ["homeassistant/light/+/set",
                                                       "homeassistant/cover/+/set"])  # Subscribe to commands to set the light status.
