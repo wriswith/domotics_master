@@ -25,6 +25,7 @@ ACTION_SET_STATUS = 'set_status'
 ACTION_SCHEDULE = 'schedule'
 ACTION_CALL_FUNCTION = 'call_function'
 ACTION_CYCLE_DIMMER = 'cycle_dimmer'
+ACTION_SET_DIMMER = 'set_dimmer'
 
 BUTTON_SHORT_RELEASE = 'short_release'  # Trigger when released before the SHORT_PRESS_CUTOFF. Should be combined with long trigger for this button.
 BUTTON_SHORT_INSTA = 'short_insta'      # Trigger upon first press, must be only trigger for this button

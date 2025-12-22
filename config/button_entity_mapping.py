@@ -1,6 +1,6 @@
 from config.constants import ACTION_CYCLE_DIMMER, BUTTON_SHORT_INSTA, BUTTON_SHORT_RELEASE, \
     BUTTON_LONG_HOLD, BUTTON_LONG_INSTA, SHADE_COMMAND_TOGGLE_UP, SHADE_COMMAND_TOGGLE_DOWN, ACTION_SWITCH, \
-    BUTTON_LONG_RELEASE
+    BUTTON_LONG_RELEASE, ACTION_SET_DIMMER
 
 # Create a mapping between the button names and the actions linked to the different possible trigger modes
 
@@ -14,14 +14,14 @@ BUTTON_ENTITY_MAP = {
     "speelkamer_deur_2": {BUTTON_SHORT_INSTA: 'Eetkamer'},
     "speelkamer_deur_3": {BUTTON_SHORT_INSTA: 'Speelkamer'},
     "speelkamer_deur_4": {BUTTON_SHORT_INSTA: 'Keuken'},
-    "living_tv_1": {BUTTON_SHORT_INSTA: 'TV Wand'},
+    "living_tv_1": {BUTTON_SHORT_INSTA: 'TV Wand', BUTTON_LONG_INSTA: ('TV Wand', ACTION_SET_DIMMER, {'brightness': 12})},
     "living_tv_2": {BUTTON_SHORT_INSTA: 'Keuken'},
     "living_tv_3": {BUTTON_SHORT_INSTA: 'TV spots'},
     "living_tv_4": {BUTTON_SHORT_INSTA: 'Eetkamer'},
     "living_screen_1": {BUTTON_SHORT_INSTA: ('Shade_Salon', SHADE_COMMAND_TOGGLE_UP)},
     "living_screen_2": {BUTTON_SHORT_INSTA: ('Shade_Salon', SHADE_COMMAND_TOGGLE_DOWN)},
     "living_thermostaat_1": {BUTTON_SHORT_INSTA: 'TV spots'},
-    "living_thermostaat_2": {BUTTON_SHORT_RELEASE: 'TV Wand', BUTTON_LONG_HOLD: ('TV Wand', ACTION_CYCLE_DIMMER)},
+    "living_thermostaat_2": {BUTTON_SHORT_RELEASE: 'TV Wand'},
     "gang_living_1": {BUTTON_SHORT_INSTA: 'Hal'},
     "gang_living_2": {BUTTON_SHORT_INSTA: 'Voordeur'},
     "gang_bureau_1": {BUTTON_SHORT_INSTA: 'Hal'},

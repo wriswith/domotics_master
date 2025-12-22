@@ -23,6 +23,8 @@ class EntityAction:
             threading.Timer(delay, EntityAction.execute, (new_entity_action, )).start()
         elif self.action == ACTION_CYCLE_DIMMER:
             self.target_entity.cycle_brightness()
+        elif self.action == ACTION_SET_DIMMER:
+            self.target_entity.set_status(1, self.named_arguments["brightness"])
         elif self.action in (SHADE_COMMAND_UP, SHADE_COMMAND_STOP, SHADE_COMMAND_DOWN, SHADE_COMMAND_TOGGLE_UP,
                              SHADE_COMMAND_TOGGLE_DOWN):
             self.target_entity.set_status(self.action)
