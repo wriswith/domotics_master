@@ -92,7 +92,7 @@ def convert_tuple_to_action_object(map_item: tuple):
         return EntityAction(target_entity=target_entity, action=map_item[1])
 
     # If an action_type and parameters are configured, pass them to the action object
-    elif len(map_item) == 2:
+    elif len(map_item) == 3:
         return EntityAction(target_entity=target_entity, action=map_item[1], named_arguments=map_item[2])
 
     else:
