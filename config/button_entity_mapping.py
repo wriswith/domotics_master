@@ -48,6 +48,6 @@ BUTTON_ENTITY_MAP = {
     "badkamer_2": {BUTTON_SHORT_INSTA: 'Spiegel'},
     "badkamer_3": {BUTTON_SHORT_RELEASE: 'SCENE douche', BUTTON_LONG_RELEASE: ('Douche', ACTION_SWITCH)},
     "trap_zolder_1": {BUTTON_SHORT_INSTA: 'Zolder'},
-    "beestje_1": {BUTTON_SHORT_RELEASE: 'Bureau Beestje', BUTTON_LONG_HOLD: ('Bureau Beestje', ACTION_CYCLE_DIMMER)},
+    "beestje_1": {BUTTON_SHORT_RELEASE: 'Bureau Beestje', BUTTON_LONG_INSTA: ('Bureau Beestje', ACTION_SET_DIMMER, {'brightness': 12})},
     "wasplaats_1": {BUTTON_SHORT_INSTA: 'Wasplaats'},
 }
