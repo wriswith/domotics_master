@@ -3,7 +3,6 @@ import time
 import traceback
 from queue import Queue
 from threading import Thread
-from typing import cast
 
 import paho.mqtt.client as mqtt
 
@@ -83,9 +82,13 @@ class MqttWorker:
         MQTT topics. When a message is received, the function process_received_message is called by the client.
         :return:
         """
+        receive_topics = ["homeassistant/light/+/set",
+                          "homeassistant/cover/+/set",
+                          "homeassistant/fan/+/set",
+                          "homeassistant/fan/+/preset/set",
+                          ]
         # Use separate client as the MQTT client is not thread safe.
-        client = self.initialize_mqtt_client(MqttWorker.process_received_message,
-                                             ["homeassistant/light/+/set", "homeassistant/cover/+/set"])
+        client = self.initialize_mqtt_client(MqttWorker.process_received_message, receive_topics)
         logger.debug("MQTT receive thread started")
         while True:
             try:
@@ -96,9 +99,7 @@ class MqttWorker:
                 traceback.print_exc()
                 client.disconnect()
                 time.sleep(3)
-                client = self.initialize_mqtt_client(MqttWorker.process_received_message,
-                                                     ["homeassistant/light/+/set",
-                                                      "homeassistant/cover/+/set"])  # Subscribe to commands to set the light status.
+                client = self.initialize_mqtt_client(MqttWorker.process_received_message, receive_topics)
 
     @staticmethod
     def process_received_message(client, userdata, msg):
@@ -116,16 +117,16 @@ class MqttWorker:
         entities = get_entities()
 
         topic = msg.topic
-        payload = json.loads(msg.payload.decode())
+        raw_payload = msg.payload.decode()
         fan_prefix = 'homeassistant/fan/'
         if topic.startswith(fan_prefix):
             topic_parts = topic[len(fan_prefix):].split('/')
             entity_name = topic_parts[0]
             fan = entities[entity_name]
-            if topic_parts[1] == 'preset':
-                fan.set_preset(payload.get("preset"))
-            elif topic_parts[1] == 'set':
-                fan.set_status(DobissEntity.convert_status_from_mqtt(payload.get("state")))
+            if topic == f'homeassistant/fan/{entity_name}/preset/set':
+                fan.set_preset(raw_payload)
+            elif topic == f'homeassistant/fan/{entity_name}/set':
+                fan.set_status(int(raw_payload))
             else:
                 raise NotImplementedError(f"Unable to handle topic: {topic}")
         else:
@@ -135,7 +136,6 @@ class MqttWorker:
                 logger.error(f"Failed to process dobiss_mqtt topic due to unknown entity name {entity_name}: {topic}")
                 return
 
-            raw_payload = msg.payload.decode()
             if raw_payload[:1] == "{":
                 try:
                     payload = json.loads(msg.payload.decode())
@@ -157,9 +157,3 @@ class MqttWorker:
             else:
                 logger.debug(f"Setting {entity_name} to {status} and {brightness}.")
                 entities[entity_name].set_status(status, brightness)
-
-
-if __name__ == '__main__':
-    from dobiss_entity_helper import get_entities
-    test_worker = MqttWorker()
-    test_worker.publish_discovery_topics(get_entities())

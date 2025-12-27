@@ -6,6 +6,7 @@ from mqtt.mqtt_worker import MqttWorker
 from objects.dobiss_entity import DobissEntity
 from objects.dobiss_relay import DobissRelay
 
+
 class DobissFan(DobissEntity):
     def __init__(self, dobiss_type: str, name: str, main_relay: DobissRelay, presets: Dict):
         super().__init__(dobiss_type, name)
@@ -50,7 +51,7 @@ class DobissFan(DobissEntity):
         return self.main_relay.get_mqtt_status()
 
     def get_mqtt_preset_status(self):
-        return json.dumps({"state": self.get_current_preset()})
+        return self.get_current_preset()
 
     def switch_status(self):
         self.main_relay.switch_status()
