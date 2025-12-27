@@ -48,7 +48,7 @@ class DobissFan(DobissEntity):
         return self.available_presets
 
     def get_mqtt_status(self):
-        return self.main_relay.get_mqtt_status()
+        return self.main_relay.current_status
 
     def get_mqtt_preset_status(self):
         return self.get_current_preset()
