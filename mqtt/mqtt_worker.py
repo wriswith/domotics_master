@@ -3,12 +3,14 @@ import time
 import traceback
 from queue import Queue
 from threading import Thread
+from typing import cast
 
 import paho.mqtt.client as mqtt
 
 from config.config import MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER, MQTT_PORT
 from logger import logger
 from mqtt.publish_discovery_topics import publish_discovery_topics_for_entities
+from objects.dobiss_fan import DobissFan
 
 _mqtt_worker = None
 
@@ -115,31 +117,44 @@ class MqttWorker:
         entities = get_entities()
 
         topic = msg.topic
-        entity_name = topic[20:-4]
-
-        if entity_name not in entities.keys():
-            logger.error(f"Failed to process mqtt topic due to unknown entity name {entity_name}: {topic}")
-            return
-
-        raw_payload = msg.payload.decode()
-        if raw_payload[:1] == "{":
-            try:
-                payload = json.loads(msg.payload.decode())
-            except Exception as e:
-                logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
-                raise e
-            status = DobissEntity.convert_status_from_mqtt(payload.get("state"))
-            brightness = payload.get("brightness")
+        payload = json.loads(msg.payload.decode())
+        fan_prefix = 'homeassistant/fan/'
+        if topic.startswith(fan_prefix):
+            topic_parts = topic[len(fan_prefix):].split('/')
+            entity_name = topic_parts[0]
+            fan = cast(DobissFan, entities[entity_name])
+            if topic_parts[1] == 'preset':
+                fan.set_preset(payload.get("preset"))
+            elif topic_parts[1] == 'set':
+                fan.set_status(DobissEntity.convert_status_from_mqtt(payload.get("state")))
+            else:
+                raise NotImplementedError(f"Unable to handle topic: {topic}")
         else:
-            status = raw_payload
-            brightness = None
+            entity_name = topic[20:-4]
 
-        # Handle binary on of switch
-        if brightness is None:
-            logger.debug(f"Setting {entity_name} to {status}")
-            entities[entity_name].set_status(status)
+            if entity_name not in entities.keys():
+                logger.error(f"Failed to process mqtt topic due to unknown entity name {entity_name}: {topic}")
+                return
 
-        # Handle JSON response
-        else:
-            logger.debug(f"Setting {entity_name} to {status} and {brightness}.")
-            entities[entity_name].set_status(status, brightness)
+            raw_payload = msg.payload.decode()
+            if raw_payload[:1] == "{":
+                try:
+                    payload = json.loads(msg.payload.decode())
+                except Exception as e:
+                    logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
+                    raise e
+                status = DobissEntity.convert_status_from_mqtt(payload.get("state"))
+                brightness = payload.get("brightness")
+            else:
+                status = raw_payload
+                brightness = None
+
+            # Handle binary on of switch
+            if brightness is None:
+                logger.debug(f"Setting {entity_name} to {status}")
+                entities[entity_name].set_status(status)
+
+            # Handle JSON response
+            else:
+                logger.debug(f"Setting {entity_name} to {status} and {brightness}.")
+                entities[entity_name].set_status(status, brightness)

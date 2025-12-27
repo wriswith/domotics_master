@@ -26,14 +26,16 @@ DOBISS_LIGHTS_CONFIG = {
     "Wasplaats": {"module": 3, "output": 12, "dobiss_type": DOBISS_RELAY, "ha_type": LIGHT},
     "Technische Ruimte": {"module": 4, "output": 1, "dobiss_type": DOBISS_RELAY, "ha_type": LIGHT},
     "Zolder": {"module": 4, "output": 2, "dobiss_type": DOBISS_RELAY, "ha_type": LIGHT},
-    "Ventilatie": {"module": 4, "output": 3, "dobiss_type": DOBISS_RELAY, "ha_type": VENTILATION},
-    "Boost": {"module": 4, "output": 4, "dobiss_type": DOBISS_RELAY, "ha_type": VENTILATION},
 }
 
 DOBISS_SHADES_CONFIG = {
   "Shade_Salon": {"output_up": {"module": 2, "output": 6}, "output_down": {"module": 2, "output": 7}, "speed_up": 13, "speed_down": 14, "dobiss_type": DOBISS_SHADE, "ha_type": SHADE},
   "Shade_Speelkamer": {"output_up": {"module": 2, "output": 10}, "output_down": {"module": 2, "output": 11}, "speed_up": 9, "speed_down": 11, "dobiss_type": DOBISS_SHADE, "ha_type": SHADE},
   "Shade_Slaapkamer Ouders": {"output_up": {"module": 4, "output": 7}, "output_down": {"module": 4, "output": 6}, "speed_up": 9, "speed_down": 10.5, "dobiss_type": DOBISS_SHADE, "ha_type": SHADE},
+}
+
+DOBISS_FAN_CONFIG = {
+    "Ventilatie": {"module": 4, "output": 3, "presets": {"boost": {"module": 4, "output": 4}}, "ha_type": VENTILATION},
 }
 
 DOBISS_SCENES_CONFIG = {
@@ -117,6 +119,3 @@ def pivot_config(config):
         else:
             result[module][output] = entity_name
     return result
-
-
-DOBISS_MODULE_OVERVIEW = pivot_config(DOBISS_LIGHTS_CONFIG)

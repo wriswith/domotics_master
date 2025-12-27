@@ -1,8 +1,9 @@
 from config.dobiss_entity_config import DOBISS_LIGHTS_CONFIG, DOBISS_SHADES_CONFIG, \
-    DOBISS_SCENES_CONFIG, DOBISS_MODULES
-from config.constants import DOBISS_RELAY, DOBISS_DIMMER, SHADE
+    DOBISS_SCENES_CONFIG, DOBISS_MODULES, DOBISS_FAN_CONFIG
+from config.constants import DOBISS_RELAY, DOBISS_DIMMER, SHADE, VENTILATION
 from objects.dobiss_dimmer import DobissDimmer
 from objects.dobiss_entity import DobissEntity
+from objects.dobiss_fan import DobissFan
 from objects.dobiss_relay import DobissRelay
 from objects.dobiss_scene import DobissScene
 from objects.dobiss_shade import DobissShade
@@ -69,9 +70,27 @@ def generate_entities_from_config():
                 action_list.append(EntityAction(entities[target_entity_name], entity_tuple[1], entity_tuple[2]))
         entities[scene_name] = DobissScene(scene_name, action_list)
 
+    for friendly_fan_name in DOBISS_FAN_CONFIG:
+        fan_name = DobissEntity.convert_name_to_entity_name(friendly_fan_name)
+        main_relay = DobissRelay(f"{fan_name}_relay",
+                                 DOBISS_FAN_CONFIG[fan_name]["module"],
+                                 DOBISS_FAN_CONFIG[fan_name]["output"],
+                                 VENTILATION)
+        presets = {}
+        for friendly_preset_name in DOBISS_FAN_CONFIG[fan_name]["presets"]:
+            preset_name = DobissEntity.convert_name_to_entity_name(friendly_preset_name)
+            presets[preset_name] = DobissRelay(
+                f"{fan_name}_{preset_name}_relay",
+                DOBISS_FAN_CONFIG[fan_name]["presets"][friendly_preset_name]["module"],
+                DOBISS_FAN_CONFIG[fan_name]["presets"][friendly_preset_name]["output"],
+                VENTILATION)
+        entities[fan_name] = DobissFan(VENTILATION, fan_name, main_relay, presets)
+
     entities_including_shade_relays = entities.copy()
     for shade_relay_entity in shade_relay_entities:
         entities_including_shade_relays[shade_relay_entity.name] = shade_relay_entity
+
+
 
     return entities, entities_including_shade_relays
 

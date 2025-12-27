@@ -1,5 +1,6 @@
 import json
 from queue import Queue
+from typing import cast
 
 from config.constants import SHADE_COMMAND_UP, SHADE_COMMAND_STOP, SHADE_COMMAND_DOWN, SHADE_STATE_UP, \
     SHADE_STATE_DOWN, SHADE_STATE_GOING_DOWN, SHADE_STATE_GOING_UP, SHADE_STATE_STOPPED, LIGHT
@@ -11,6 +12,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
     from objects.dobiss_relay import DobissRelay
     from objects.dobiss_output import DobissOutput
     from objects.dobiss_shade import DobissShade
+    from objects.dobiss_fan import DobissFan
     for entity_name in entities:
         entity = entities[entity_name]
         if (isinstance(entity, DobissOutput) and entity.device_type == LIGHT) or type(entity) is DobissShade:
@@ -62,6 +64,22 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                   "state_stopped": SHADE_STATE_STOPPED,
                   "device_class": "shade",
                   "retain": False,
+                }
+            elif type(entity) is DobissFan:
+                entity = cast(DobissFan, entity)
+                domain = "fan"
+                discover_payload = {
+                    "name": entity_name,
+                    "unique_id": entity_name,
+                    "command_topic": entity.get_mqtt_command_topic(),
+                    "state_topic": entity.get_mqtt_state_topic(),
+                    "preset_modes": entity.get_preset_modes(),
+                    "preset_mode_command_topic": entity.get_mqtt_preset_command_topic(),
+                    "preset_mode_state_topic": entity.get_mqtt_preset_state_topic(),
+                    "device_class": "fan",
+                    "payload_on": 1,
+                    "payload_off": 0,
+                    "retain": False,
                 }
             else:
                 raise Exception(f"Unknown entity type: {type(entity)}")
