@@ -12,8 +12,8 @@ class DobissFan(DobissEntity):
         self.main_relay = main_relay
         self.current_status = 1
         self.device_type = VENTILATION
-        self.available_presets = list(presets.keys())
-        self.available_presets.append("normal")
+        self.available_presets = ["normal"]
+        self.available_presets.extend(list(presets.keys()))
         self.current_preset = "normal"
         self.presets = presets
 

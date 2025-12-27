@@ -73,16 +73,16 @@ def generate_entities_from_config():
     for friendly_fan_name in DOBISS_FAN_CONFIG:
         fan_name = DobissEntity.convert_name_to_entity_name(friendly_fan_name)
         main_relay = DobissRelay(f"{fan_name}_relay",
-                                 DOBISS_FAN_CONFIG[fan_name]["module"],
-                                 DOBISS_FAN_CONFIG[fan_name]["output"],
+                                 DOBISS_FAN_CONFIG[friendly_fan_name]["module"],
+                                 DOBISS_FAN_CONFIG[friendly_fan_name]["output"],
                                  VENTILATION)
         presets = {}
-        for friendly_preset_name in DOBISS_FAN_CONFIG[fan_name]["presets"]:
+        for friendly_preset_name in DOBISS_FAN_CONFIG[friendly_fan_name]["presets"]:
             preset_name = DobissEntity.convert_name_to_entity_name(friendly_preset_name)
             presets[preset_name] = DobissRelay(
                 f"{fan_name}_{preset_name}_relay",
-                DOBISS_FAN_CONFIG[fan_name]["presets"][friendly_preset_name]["module"],
-                DOBISS_FAN_CONFIG[fan_name]["presets"][friendly_preset_name]["output"],
+                DOBISS_FAN_CONFIG[friendly_fan_name]["presets"][friendly_preset_name]["module"],
+                DOBISS_FAN_CONFIG[friendly_fan_name]["presets"][friendly_preset_name]["output"],
                 VENTILATION)
         entities[fan_name] = DobissFan(VENTILATION, fan_name, main_relay, presets)
 

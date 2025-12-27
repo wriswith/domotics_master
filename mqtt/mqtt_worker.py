@@ -10,7 +10,6 @@ import paho.mqtt.client as mqtt
 from config.config import MQTT_USERNAME, MQTT_PASSWORD, MQTT_BROKER, MQTT_PORT
 from logger import logger
 from mqtt.publish_discovery_topics import publish_discovery_topics_for_entities
-from objects.dobiss_fan import DobissFan
 
 _mqtt_worker = None
 
@@ -122,7 +121,7 @@ class MqttWorker:
         if topic.startswith(fan_prefix):
             topic_parts = topic[len(fan_prefix):].split('/')
             entity_name = topic_parts[0]
-            fan = cast(DobissFan, entities[entity_name])
+            fan = entities[entity_name]
             if topic_parts[1] == 'preset':
                 fan.set_preset(payload.get("preset"))
             elif topic_parts[1] == 'set':
@@ -133,7 +132,7 @@ class MqttWorker:
             entity_name = topic[20:-4]
 
             if entity_name not in entities.keys():
-                logger.error(f"Failed to process mqtt topic due to unknown entity name {entity_name}: {topic}")
+                logger.error(f"Failed to process dobiss_mqtt topic due to unknown entity name {entity_name}: {topic}")
                 return
 
             raw_payload = msg.payload.decode()
@@ -158,3 +157,9 @@ class MqttWorker:
             else:
                 logger.debug(f"Setting {entity_name} to {status} and {brightness}.")
                 entities[entity_name].set_status(status, brightness)
+
+
+if __name__ == '__main__':
+    from dobiss_entity_helper import get_entities
+    test_worker = MqttWorker()
+    test_worker.publish_discovery_topics(get_entities())

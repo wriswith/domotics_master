@@ -70,8 +70,6 @@ DOBISS_SCENES_CONFIG = {
                   ],
     "SCENE douche": [
                     ("Douche", ACTION_SWITCH),
-                    ("Boost", ACTION_TURN_ON),
-                    ("Boost", ACTION_SCHEDULE, {"delay": 1800, "real_action": ACTION_TURN_OFF, "named_arguments": {}}),
                   ],
 }
 
