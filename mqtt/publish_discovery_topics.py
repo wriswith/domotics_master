@@ -76,8 +76,8 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                 "preset_mode_command_topic": entity.get_mqtt_preset_command_topic(),
                 "preset_mode_state_topic": entity.get_mqtt_preset_state_topic(),
                 "device_class": "fan",
-                "payload_on": 1,
-                "payload_off": 0,
+                "payload_on": "ON",
+                "payload_off": "OFF",
                 "schema": "json",
                 "retain": False,
             }
