@@ -85,7 +85,6 @@ class MqttWorker:
         receive_topics = ["homeassistant/light/+/set",
                           "homeassistant/cover/+/set",
                           "homeassistant/fan/+/set",
-                          "homeassistant/fan/+/preset/set",
                           ]
         # Use separate client as the MQTT client is not thread safe.
         client = self.initialize_mqtt_client(MqttWorker.process_received_message, receive_topics)
@@ -121,19 +120,19 @@ class MqttWorker:
         fan_prefix = 'homeassistant/fan/'
         if topic.startswith(fan_prefix):
             try:
-                state = json.loads(msg.payload.decode()).get("state")
+                payload = json.loads(msg.payload.decode())
+                state = payload.get("state")
+                preset = payload.get("preset_mode")
             except Exception as e:
                 logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
                 raise e
             topic_parts = topic[len(fan_prefix):].split('/')
             entity_name = topic_parts[0]
             fan = entities[entity_name]
-            if topic == f'homeassistant/fan/{entity_name}/preset/set':
-                fan.set_preset(state)
-            elif topic == f'homeassistant/fan/{entity_name}/set':
+            if state is not None:
                 fan.set_status(DobissEntity.convert_status_from_mqtt(state))
-            else:
-                raise NotImplementedError(f"Unable to handle topic: {topic}")
+            if preset is not None:
+                fan.set_preset(state)
         else:
             entity_name = topic[20:-4]
 
