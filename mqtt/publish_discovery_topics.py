@@ -78,6 +78,7 @@ def publish_discovery_topics_for_entities(publish_queue: Queue, entities):
                 "device_class": "fan",
                 "payload_on": 1,
                 "payload_off": 0,
+                "schema": "json",
                 "retain": False,
             }
         elif type(entity) is DobissScene:

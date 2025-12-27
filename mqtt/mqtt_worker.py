@@ -120,13 +120,18 @@ class MqttWorker:
         raw_payload = msg.payload.decode()
         fan_prefix = 'homeassistant/fan/'
         if topic.startswith(fan_prefix):
+            try:
+                state = json.loads(msg.payload.decode()).get("state")
+            except Exception as e:
+                logger.error(f"Failed to parse payload of topic {topic} as JSON ({msg.payload.decode()})")
+                raise e
             topic_parts = topic[len(fan_prefix):].split('/')
             entity_name = topic_parts[0]
             fan = entities[entity_name]
             if topic == f'homeassistant/fan/{entity_name}/preset/set':
-                fan.set_preset(raw_payload)
+                fan.set_preset(state)
             elif topic == f'homeassistant/fan/{entity_name}/set':
-                fan.set_status(int(raw_payload))
+                fan.set_status(DobissEntity.convert_status_from_mqtt(state))
             else:
                 raise NotImplementedError(f"Unable to handle topic: {topic}")
         else:

@@ -48,10 +48,11 @@ class DobissFan(DobissEntity):
         return self.available_presets
 
     def get_mqtt_status(self):
-        return self.main_relay.current_status
+        return self.main_relay.get_mqtt_status()
 
     def get_mqtt_preset_status(self):
-        return self.get_current_preset()
+        result = {"state": self.get_current_preset()}
+        return json.dumps(result)
 
     def switch_status(self):
         self.main_relay.switch_status()
