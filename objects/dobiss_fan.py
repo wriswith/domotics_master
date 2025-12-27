@@ -48,7 +48,12 @@ class DobissFan(DobissEntity):
         return self.available_presets
 
     def get_mqtt_status(self):
-        return self.main_relay.get_mqtt_status()
+
+        if self.main_relay.current_status == 1:
+            result = {"state": "ON", "preset_mode": self.get_current_preset()}
+        else:
+            result = {"state": "OFF", "preset_mode": self.get_current_preset()}
+        return json.dumps(result)
 
     def get_mqtt_preset_status(self):
         result = {"state": self.get_current_preset()}
@@ -58,8 +63,7 @@ class DobissFan(DobissEntity):
         self.main_relay.switch_status()
 
     def report_state_to_mqtt(self):
-        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.main_relay.get_mqtt_status(), True))
-        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_preset_state_topic(), self.get_mqtt_preset_status(), True))
+        MqttWorker.get_mqtt_worker().publish_queue.put((self.get_mqtt_state_topic(), self.get_mqtt_status(), True))
 
     def get_current_preset(self):
         for preset in self.presets:
