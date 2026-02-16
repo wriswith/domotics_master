@@ -87,19 +87,35 @@ class MqttWorker:
                           "homeassistant/fan/+/set",
                           "homeassistant/fan/+/preset/set",
                           ]
+
+        def on_connect(client, userdata, flags, rc):
+            if rc == 0:
+                logger.info("MQTT connected")
+                for receive_topic in receive_topics:
+                    client.subscribe(receive_topic)
+            else:
+                logger.error(f"MQTT connection failed rc={rc}")
+
+        def on_disconnect(client, userdata, rc):
+            if rc != 0:
+                logger.warning("MQTT disconnected unexpectedly")
+
         # Use separate client as the MQTT client is not thread safe.
-        client = self.initialize_mqtt_client(MqttWorker.process_received_message, receive_topics)
-        logger.debug("MQTT receive thread started")
+        mqtt_client = mqtt.Client()
+        mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+        mqtt_client.on_connect = on_connect
+        mqtt_client.on_disconnect = on_disconnect
+        mqtt_client.on_message = MqttWorker.process_received_message
+        mqtt_client.tls_set()
+        mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+        logger.debug("Initialed MQTT client")
+
         while True:
             try:
-                client.loop_forever()
+                mqtt_client.loop_forever()
             except Exception as e:
                 logger.error(f"MQTT receive client failed with error: {e}")
-                # Upon exception create a new connection.
-                traceback.print_exc()
-                client.disconnect()
-                time.sleep(3)
-                client = self.initialize_mqtt_client(MqttWorker.process_received_message, receive_topics)
+                time.sleep(10)
 
     @staticmethod
     def process_received_message(client, userdata, msg):
